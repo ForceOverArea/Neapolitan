@@ -54,7 +54,7 @@ inline Problem_T initProblem()
     return problem;
 }
 
-/// @brief Creates a new element. 
+/// @brief A routine that creates a new element within a problem. 
 /// @param problem The `Problem_T` to add the element in
 /// @param kind The `ElementType` enum variant that this element should have.
 /// @param input The node to connect to the element's input
@@ -62,22 +62,23 @@ inline Problem_T initProblem()
 /// @param gainDimension The dimension of this element's gain. (e.g. a simple resistor will be 1, an impedance value will be 2, etc.)
 /// @return an integer value indicating success (1) or failure (0)
 int newBasicElement(
-    Problem_T problem, 
+    Problem_T* problem, 
     size_t kind, 
+    size_t gainDimension,
     Node_T* input, 
-    Node_T* output, 
-    size_t gainDimension);
+    Node_T* output);
 
-/// 
+/// @brief Expands to a constructor function for adding 
+/// an element to a problem.
 #define ELEMENT_CONSTRUCTOR(funcName, kind, dim)    \
-int funcName(Problem_T problem, size_t a, size_t b) \
+int funcName(Problem_T* problem, size_t a, size_t b)\
 {                                                   \
     return newBasicElement(                         \
         problem,                                    \
         kind,                                       \
         (problem.nodes + a),                        \
         (problem.nodes + b),                        \
-        (size_t)(dim);                              \
+        (size_t)(dim));                             \
 }
 
 #endif
