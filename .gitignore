@@ -1,0 +1,4 @@
+.vscode
+CNeapolitan/obj/*
+CNeapolitan/lib/*
+Neapolitan/**/__pycache__
