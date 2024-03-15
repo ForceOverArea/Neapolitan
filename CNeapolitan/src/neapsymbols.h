@@ -17,8 +17,8 @@ const int OK = 1;
 /// @brief Return value inticating failure on "try-routine" pattern functions
 const int ERR = 0;
 
-/// @brief Causes a wrapping function `ERR` 
-/// if the given pointer is `NULL`.
+/// @brief Causes a wrapping function to return 
+/// `ERR` if the given pointer is `NULL`.
 #define ABORT_IF_NULL(var)  \
 if (NULL == (var))          \
 {                           \
