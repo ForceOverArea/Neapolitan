@@ -77,7 +77,7 @@ int newBasicElement(
 /// @brief Expands to a constructor function for adding 
 /// an element to a problem.
 #define ELEMENT_CONSTRUCTOR(funcName, kind, dim)        \
-int funcName ## (Problem_T* problem, size_t a, size_t b)\
+inline int funcName ## (Problem_T* problem, size_t a, size_t b)\
 {                                                       \
     return newBasicElement(                             \
         problem,                                        \
