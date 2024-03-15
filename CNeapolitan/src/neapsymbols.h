@@ -12,10 +12,14 @@ const double DX = _DX_VALUE;
 const double DISCRETE_INF = 1 / _DX_VALUE; 
 
 /// @brief Return value inticating success on "try-routine" pattern functions
-const int OK = 1;
+#define OK 1
 
 /// @brief Return value inticating failure on "try-routine" pattern functions
-const int ERR = 0;
+#define ERR 0
+
+#define TRUE 1
+
+#define FALSE 0
 
 /// @brief Causes a wrapping function to return 
 /// `ERR` if the given pointer is `NULL`.
