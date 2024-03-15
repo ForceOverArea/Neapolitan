@@ -1,5 +1,27 @@
 #include "nodeprimitive.h"
 
+int newBasicNode(Problem_T* problem, size_t potentialDimension)
+{
+    Node_T* maybeNode = malloc(
+        sizeof(Node_T) +
+        sizeof(double) * potentialDimension);
+
+    ABORT_IF_NULL(maybeNode);
+
+    NodeVec_T* tmp;
+    tmp = pushValToPtrVec(problem->nodes, maybeNode);
+    ABORT_IF_NULL(tmp)
+    problem->nodes = tmp;
+
+    // Initialize ALL potential values 
+    for (size_t i = 0; i < potentialDimension; i++)
+    {
+        maybeNode->potential[i] = 1;
+    }
+
+    return OK;
+}
+
 int newBasicElement(
     Problem_T* problem,
     size_t kind, 
@@ -30,18 +52,18 @@ int newBasicElement(
     ElementVec_T* tmp;
 
     tmp = pushValToPtrVec(input->outputs, maybeElement);
-    ABORT_IF_NULL(tmp);
+    ABORT_IF_NULL(tmp)
     input->outputs = tmp;
 
     tmp = pushValToPtrVec(output->inputs, maybeElement);
-    ABORT_IF_NULL(tmp);
+    ABORT_IF_NULL(tmp)
     output->inputs = tmp;
 
     tmp = pushValToPtrVec(problem->elements, maybeElement);
-    ABORT_IF_NULL(tmp);
+    ABORT_IF_NULL(tmp)
     problem->elements = tmp;
 
-    // Zero ALL gain values 
+    // Initialize ALL gain values 
     for (size_t i = 0; i < gainDimension; i++)
     {
         maybeElement->gain[i] = 1;

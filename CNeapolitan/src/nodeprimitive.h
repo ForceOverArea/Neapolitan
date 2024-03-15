@@ -54,6 +54,12 @@ inline Problem_T initProblem()
     return problem;
 }
 
+/// @brief A routine that creates a new node within a problem.
+/// @param problem A reference to the `Problem_T` to add a `Node_T` to. 
+/// @param potentialDimension The dimension of the added node's potential value.
+/// @return an `int` value representing success (1) or failure (0) 
+int newBasicNode(Problem_T* problem, size_t potentialDimension);
+
 /// @brief A routine that creates a new element within a problem. 
 /// @param problem The `Problem_T` to add the element in
 /// @param kind The `ElementType` enum variant that this element should have.
@@ -70,15 +76,15 @@ int newBasicElement(
 
 /// @brief Expands to a constructor function for adding 
 /// an element to a problem.
-#define ELEMENT_CONSTRUCTOR(funcName, kind, dim)    \
-int funcName(Problem_T* problem, size_t a, size_t b)\
-{                                                   \
-    return newBasicElement(                         \
-        problem,                                    \
-        kind,                                       \
-        (problem.nodes + a),                        \
-        (problem.nodes + b),                        \
-        (size_t)(dim));                             \
+#define ELEMENT_CONSTRUCTOR(funcName, kind, dim)        \
+int funcName ## (Problem_T* problem, size_t a, size_t b)\
+{                                                       \
+    return newBasicElement(                             \
+        problem,                                        \
+        kind,                                           \
+        (problem->nodes + a),                           \
+        (problem->nodes + b),                           \
+        (size_t)(dim));                                 \
 }
 
 #endif
