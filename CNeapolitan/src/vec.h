@@ -125,7 +125,7 @@ inline void* getPtrVecIndex(PtrVec_T* vec, size_t idx)
     return getVecIndexAsRef(vec, idx)->pVal;
 }
 
-inline void* popValBackFromDoubleVec(PtrVec_T* vec)
+inline void* popValBackFromPtrVec(PtrVec_T* vec)
 {
     return popValBackFromVec(vec).pVal;
 }
@@ -134,7 +134,7 @@ inline void* popValBackFromDoubleVec(PtrVec_T* vec)
 
 typedef Vec_T IntVec_T;
 
-inline IntVec_T* newPtrVec()
+inline IntVec_T* newIntVec()
 {
     return newVec();
 }
@@ -142,7 +142,7 @@ inline IntVec_T* newPtrVec()
 inline IntVec_T* pushValToIntVec(IntVec_T* vec, size_t val)
 {
     UnitSized_T unit;
-    unit.pVal = val;
+    unit.iVal = val;
     return pushValToVec(vec, unit);
 }
 

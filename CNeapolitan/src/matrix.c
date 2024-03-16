@@ -19,17 +19,15 @@ int newMatrix(Matrix_T* mat, size_t rows, size_t cols)
     return OK;
 }
 
-Matrix_T* newIdentityMatrix(size_t n)
+int newIdentityMatrix(Matrix_T* mat, size_t n)
 {
-    Matrix_T* retVal;
-
     DoubleVec_T* data = newVecWithCapacity(n * n);
     if (NULL == data)
     {
-        return NULL;
+        return ERR;
     }
     
-    *retVal = (Matrix_T){ n, n, data }; 
+    *mat = (Matrix_T){ n, n, data }; 
     
     for (size_t i = 0; i < n * n; i++)
     {
@@ -37,14 +35,14 @@ Matrix_T* newIdentityMatrix(size_t n)
         if (n * n / i == n && 
             n * n % i == 0) 
         {
-            pushValToDoubleVec(retVal->data, 1.0);
+            pushValToDoubleVec(mat->data, 1.0);
             continue;
         }
 
-        pushValToDoubleVec(retVal->data, 0.0);
+        pushValToDoubleVec(mat->data, 0.0);
     }
 
-    return retVal;
+    return OK;
 }
 
 void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
@@ -84,15 +82,18 @@ void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, double scalar)
     }
 }
 
-Matrix_T* mulMatrix(const Matrix_T* left, const Matrix_T* right)
+int mulMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->cols != right->rows)
     {
-        return NULL;
+        return ERR;
     } 
 
     size_t n = left->cols;
-    Matrix_T* retVal = newMatrix(left->rows, right->cols);
+    if (!newMatrix(product, left->rows, right->cols))
+    {
+        return ERR;
+    }
 
     for (size_t i = 0; i < left->rows; i++)
     {
@@ -102,60 +103,61 @@ Matrix_T* mulMatrix(const Matrix_T* left, const Matrix_T* right)
             {
                 double loperend = *(indexMatrix(left,  i, x));
                 double roperend = *(indexMatrix(right, x, j));
-                *(indexMatrix(retVal, i, j)) = loperend * roperend;
+                *(indexMatrix(product, i, j)) = loperend * roperend;
             }
         }
     }
 
-    return retVal;
+    return OK;
 }
 
-Matrix_T* augmentMatrix(const Matrix_T* left, const Matrix_T* right)
+int augmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->rows != right->rows)
     {
-        return NULL;
+        return ERR;
     }
 
     size_t n = left->rows;
-    Matrix_T* retVal = newMatrix(n, left->cols + right->cols); 
-    if (NULL == retVal)
+    if (!newMatrix(augment, n, left->cols + right->cols))
     {
-        return NULL;
+        return ERR;
     }
 
-    for (size_t i = 0; i < retVal->rows; i++)
+    for (size_t i = 0; i < augment->rows; i++)
     {
-        for (size_t j = 0; j < retVal->cols; j++)
+        for (size_t j = 0; j < augment->cols; j++)
         {
             if (j < left->cols) // take value from the left matrix
             {
-                *(indexMatrix(retVal, i, j)) = *(indexMatrix(left, i, j));
+                *(indexMatrix(augment, i, j)) = *(indexMatrix(left, i, j));
             }
             else // take value from the right matrix
             {
-                *(indexMatrix(retVal, i, j)) = *(indexMatrix(right, i, j - left->cols));
+                *(indexMatrix(augment, i, j)) = *(indexMatrix(right, i, j - left->cols));
             }
         }
     }
+
+    return OK;
 }
 
-Matrix_T* subset(const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
+int subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
 {
-    Matrix_T* retVal = newMatrix(r2 - r1 + 1, c2 - c1 + 1);
-    
-    if (NULL == retVal)
+    if (!newMatrix(slice, r2 - r1 + 1, c2 - c1 + 1))
     {
-        return NULL;
+        return ERR;
     }
 
     for (size_t i = r1; i <= r2; i++)
     {
         for (size_t j = c1; j <= c2; j++)
         {
-            *(indexMatrix(retVal, i - r1, j - c1)) = *(indexMatrix(mat, i, j));
+            *(indexMatrix(slice, i - r1, j - c1)) = *(indexMatrix(mat, i, j));
         }
     }
+
+    return OK;
 }
 
 static inline int tryInplaceInvert2(Matrix_T* mat)

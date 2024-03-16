@@ -21,6 +21,12 @@ typedef struct Matrix_S Matrix_T;
 /// @return An integer value indicating success (1) or failure (0)
 int newMatrix(Matrix_T* mat, size_t rows, size_t cols);
 
+/// @brief A routine that allocates a new identity `Matrix_T` within the given pointer
+/// @param mat A reference to the `Matrix_T` to populate
+/// @param n The number of rows/cols the matrix should have
+/// @return An integer value indicating success (1) or failure (0)
+int newIdentityMatrix(Matrix_T* mat, size_t n);
+
 /// @brief Returns a mutable pointer to a value stored in the `Matrix_T`.
 /// @param mat The `Matrix_T*` to get the value from.
 /// @param i The row to access
@@ -38,27 +44,30 @@ inline double* indexMatrix(const Matrix_T* mat, size_t i, size_t j)
 void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2);
 
 /// @brief Calculates the Matrix product of two matrices
+/// @param product The matrix to populate with the calculated matrix product
 /// @param left The 'left' matrix pointer
 /// @param right The 'right' matrix pointer
-/// @return The product of the left and right matrix
-Matrix_T* mulMatrix(const Matrix_T* left, const Matrix_T* right);
+/// @return An integer value indicating success (1) or failure (0)
+int mulMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right);
 
 /// @brief Augments two matrices, producing a third 
 /// matrix with the left's columns appended to the right's.
+/// @param augment A reference to the matrix to store the augment in 
 /// @param left The left matrix to use
 /// @param right The right matrix to use
-/// @return A new pointer to the augment of `left` and `right`
-Matrix_T* augmentMatrix(const Matrix_T* left, const Matrix_T* right);
+/// @return An integer value indicating success (1) or failure (0)
+int augmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right);
 
 /// @brief Takes a slice of a matrix, copying the 
-/// sliced values to a newly-allocated `Matrix_T`.
+/// sliced values to a new `Matrix_T`.
+/// @param slice A reference to the matrix to store the slice in
 /// @param mat A pointer to the matrix to take a slice from
 /// @param r1 The first (top) row in the slice 
 /// @param c1 The first (left) column in the slice
 /// @param r2 The last row in the slice
 /// @param c2 The last column in the slice
-/// @return A new `Matrix_T` containing the selected elements
-Matrix_T* subset(const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2);
+/// @return An integer value indicating success (1) or failure (0)
+int subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2);
 
 /// @brief Tries to invert a `Matrix_T` in-place, 
 /// mutating it's value to the inverse. 
