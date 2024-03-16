@@ -3,17 +3,17 @@
 
 int newMatrix(Matrix_T* mat, size_t rows, size_t cols)
 {
-    DoubleVec_T* data = newVecWithCapacity(rows * cols);
-    if (NULL == data)
-    {
-        return ERR;
-    }
+    DoubleVec_T* tmp;
+    tmp = newVecWithCapacity(rows * cols);
+    ABORT_IF_NULL(tmp)
     
-    *mat = (Matrix_T){ rows, cols, data }; 
+    *mat = (Matrix_T){ rows, cols, tmp }; 
     
     for (size_t i = 0; i < rows * cols; i++)
     {
-        pushValToDoubleVec(mat->data, 0.0);
+        tmp = pushValToDoubleVec(mat->data, 0.0);
+        ABORT_IF_NULL(tmp)
+        mat->data = tmp;
     }
 
     return OK;
@@ -21,25 +21,26 @@ int newMatrix(Matrix_T* mat, size_t rows, size_t cols)
 
 int newIdentityMatrix(Matrix_T* mat, size_t n)
 {
-    DoubleVec_T* data = newVecWithCapacity(n * n);
-    if (NULL == data)
-    {
-        return ERR;
-    }
+    DoubleVec_T* tmp;
+    tmp = newVecWithCapacity(n * n);
+    ABORT_IF_NULL(tmp)
     
-    *mat = (Matrix_T){ n, n, data }; 
+    *mat = (Matrix_T){ n, n, tmp }; 
     
     for (size_t i = 0; i < n * n; i++)
     {
         // If element is on the diagonal
         if (n * n / i == n && 
-            n * n % i == 0) 
+            n * n % i == 0)
         {
-            pushValToDoubleVec(mat->data, 1.0);
-            continue;
+            tmp = pushValToDoubleVec(mat->data, 1.0);
+            ABORT_IF_NULL(tmp)
+            mat->data = tmp;
         }
 
-        pushValToDoubleVec(mat->data, 0.0);
+        tmp = pushValToDoubleVec(mat->data, 0.0);
+        ABORT_IF_NULL(tmp)
+        mat->data = tmp;
     }
 
     return OK;
