@@ -278,7 +278,11 @@ static inline int tryInplaceInvertN(Matrix_T* mat)
     // Assertion that rows == cols has already 
     // happened prior to this function call.
     size_t n = mat->cols;
-    Matrix_T* inv = newIdentityMatrix(n);
+    Matrix_T inv; 
+    if (!newIdentityMatrix(&inv, n))
+    {
+        return ERR;
+    }
     double scalar;
 
     for (size_t j = 0; j < n; j++)
@@ -297,7 +301,7 @@ static inline int tryInplaceInvertN(Matrix_T* mat)
                 }
                 scalar = *(indexMatrix(mat, i, j)) / (*(indexMatrix(mat, j, j)));
                 inplaceScaledRowAdd(mat, i, j, -scalar);
-                inplaceScaledRowAdd(inv, i, j, -scalar);
+                inplaceScaledRowAdd(&inv, i, j, -scalar);
             }
         }
     }
@@ -308,11 +312,11 @@ static inline int tryInplaceInvertN(Matrix_T* mat)
         // We only need to do this operation for the inverse copy here
         // since the changes to one row will not affect changes to
         // the others.
-        inplaceRowScale(inv, i, scalar);
+        inplaceRowScale(&inv, i, scalar);
     }
 
-    free(mat);
-    mat = inv;
+    free(mat->data);    // Prevent memory leak
+    *mat = inv;         // Assign `inv` to `mat` contents
 
     return OK;
 }
