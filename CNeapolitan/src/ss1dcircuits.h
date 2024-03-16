@@ -2,8 +2,7 @@
 #define SS1DCIRCUITS_H_
 
 #include "elementtypes.h"
-#include "neapsymbols.h"
-#include "nodeprimitive.h"
+#include "nodeprimitive.h" // Also includes "neapsymbols.h"
 
 typedef Element_T Resistor_T;
 
