@@ -14,11 +14,12 @@ struct Matrix_S
 /// @brief An abbreviation for `struct Matrix_S`.
 typedef struct Matrix_S Matrix_T;
 
-/// @brief Allocates a new Matrix_T
+/// @brief A routine that allocates a new `Matrix_T` within the given pointer
+/// @param mat A reference to the `Matrix_T` to populate
 /// @param rows The number of rows the matrix should have
 /// @param cols The number of columns the matrix should have
-/// @return a new Matrix_T* or NULL on failure
-Matrix_T* newMatrix(size_t rows, size_t cols);
+/// @return An integer value indicating success (1) or failure (0)
+int newMatrix(Matrix_T* mat, size_t rows, size_t cols);
 
 /// @brief Returns a mutable pointer to a value stored in the `Matrix_T`.
 /// @param mat The `Matrix_T*` to get the value from.

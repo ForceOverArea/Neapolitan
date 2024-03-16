@@ -1,24 +1,22 @@
 #include "matrix.h"
 #include "neapsymbols.h"
 
-Matrix_T* newMatrix(size_t rows, size_t cols)
+int newMatrix(Matrix_T* mat, size_t rows, size_t cols)
 {
-    Matrix_T* retVal;
-
     DoubleVec_T* data = newVecWithCapacity(rows * cols);
     if (NULL == data)
     {
-        return NULL;
+        return ERR;
     }
     
-    *retVal = (Matrix_T){ rows, cols, data }; 
+    *mat = (Matrix_T){ rows, cols, data }; 
     
     for (size_t i = 0; i < rows * cols; i++)
     {
-        pushValToDoubleVec(retVal->data, 0.0);
+        pushValToDoubleVec(mat->data, 0.0);
     }
 
-    return retVal;
+    return OK;
 }
 
 Matrix_T* newIdentityMatrix(size_t n)
