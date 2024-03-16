@@ -5,9 +5,17 @@
 /// unique value for a given element type.
 enum ElementTypes
 {
+    // Steady-state, 1D circuits
     RESISTOR,
     VOLTAGESOURCE,
     CURRENTSOURCE,
+    // Steady-state AC circuits
+    IMPEDANCE,
+    INDUCTOR,
+    CAPACITOR,
+    ACSOURCE,
+    // Static 1D structures
+    LINK,
 };
 
 #endif

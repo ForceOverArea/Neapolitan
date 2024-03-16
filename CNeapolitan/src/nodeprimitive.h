@@ -32,7 +32,7 @@ typedef PtrVec_T ElementVec_T;
 /// @brief A vector of node pointers
 typedef PtrVec_T NodeVec_T;
 
-typedef struct Problem_S
+struct Problem_S
 {
     ElementVec_T* elements;
     NodeVec_T* nodes; 
@@ -47,8 +47,8 @@ inline Problem_T initProblem()
 {
     Problem_T problem = 
     { 
-        newPtrVec(), 
-        newPtrVec(), 
+        (ElementVec_T*)newPtrVec(),
+        (NodeVec_T*)newPtrVec(),
     };
 
     return problem;
@@ -76,15 +76,15 @@ int newBasicElement(
 
 /// @brief Expands to a constructor function for adding 
 /// an element to a problem.
-#define ELEMENT_CONSTRUCTOR(funcName, kind, dim)        \
-inline int funcName ## (Problem_T* problem, size_t a, size_t b)\
-{                                                       \
-    return newBasicElement(                             \
-        problem,                                        \
-        kind,                                           \
-        (problem->nodes + a),                           \
-        (problem->nodes + b),                           \
-        (size_t)(dim));                                 \
+#define ELEMENT_CONSTRUCTOR(funcName, kind, dim)    \
+inline int funcName(Problem_T* problem, size_t a, size_t b)\
+{                                                   \
+    return newBasicElement(                         \
+        problem,                                    \
+        kind,                                       \
+        (size_t)(dim),                              \
+        (problem->nodes->data[a].pVal),             \
+        (problem->nodes->data[b].pVal));            \
 }
 
 #endif
