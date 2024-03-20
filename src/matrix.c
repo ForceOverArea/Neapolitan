@@ -1,49 +1,55 @@
 #include "matrix.h"
-#include "neapsymbols.h"
 
-int newMatrix(Matrix_T* mat, size_t rows, size_t cols)
+bool tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
 {
-    DoubleVec_T* tmp;
-    tmp = newVecWithCapacity(rows * cols);
-    ABORT_IF_NULL(tmp)
-    
-    *mat = (Matrix_T){ rows, cols, tmp }; 
-    
-    for (size_t i = 0; i < rows * cols; i++)
+    if (0 == rows || 0 == cols)
     {
-        tmp = pushValToDoubleVec(mat->data, 0.0);
-        ABORT_IF_NULL(tmp)
-        mat->data = tmp;
+        return false;
     }
 
-    return OK;
+    size_t numElems = rows * cols;
+    maybeMatrix->elements = newVec(numElems);
+    if (NULL == maybeMatrix->elements)
+    {
+        return false;
+    }
+
+    maybeMatrix->rows = rows;
+    maybeMatrix->cols = cols;
+
+    for (size_t i = 0; i < numElems; i++)
+    {
+        // For matrices, zero all elements on creation:
+        maybeMatrix->elements->elements[i].floating = 0;
+    }
+
+    return true;
 }
 
-int newIdentityMatrix(Matrix_T* mat, size_t n)
+bool tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
 {
-    DoubleVec_T* tmp;
-    tmp = newVecWithCapacity(n * n);
-    ABORT_IF_NULL(tmp)
-    
-    *mat = (Matrix_T){ n, n, tmp }; 
-    
-    for (size_t i = 0; i < n * n; i++)
+    if (0 == n)
     {
-        // If element is on the diagonal
-        if (n * n / i == n && 
-            n * n % i == 0)
-        {
-            tmp = pushValToDoubleVec(mat->data, 1.0);
-            ABORT_IF_NULL(tmp)
-            mat->data = tmp;
-        }
-
-        tmp = pushValToDoubleVec(mat->data, 0.0);
-        ABORT_IF_NULL(tmp)
-        mat->data = tmp;
+        return false;
     }
 
-    return OK;
+    size_t numElems = n * n;
+    maybeMatrix->elements = newVec(numElems);
+    if (NULL == maybeMatrix->elements)
+    {
+        return false;
+    }
+
+    maybeMatrix->rows = n;
+    maybeMatrix->cols = n;
+
+    for (size_t i = 0; i < numElems; i++)
+    {
+        // For matrices, zero all elements on creation:
+        maybeMatrix->elements->elements[i].floating = 0;
+    }
+
+    return true;
 }
 
 void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
@@ -83,17 +89,17 @@ void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, double scalar)
     }
 }
 
-int mulMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
+bool tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->cols != right->rows)
     {
-        return ERR;
+        return false;
     } 
 
     size_t n = left->cols;
-    if (!newMatrix(product, left->rows, right->cols))
+    if (!tryNewMatrix(product, left->rows, right->cols))
     {
-        return ERR;
+        return false;
     }
 
     for (size_t i = 0; i < left->rows; i++)
@@ -109,20 +115,20 @@ int mulMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
         }
     }
 
-    return OK;
+    return true;
 }
 
-int augmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
+bool tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->rows != right->rows)
     {
-        return ERR;
+        return false;
     }
 
     size_t n = left->rows;
-    if (!newMatrix(augment, n, left->cols + right->cols))
+    if (!tryNewMatrix(augment, n, left->cols + right->cols))
     {
-        return ERR;
+        return false;
     }
 
     for (size_t i = 0; i < augment->rows; i++)
@@ -140,14 +146,14 @@ int augmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right
         }
     }
 
-    return OK;
+    return true;
 }
 
-int subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
+bool subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
 {
-    if (!newMatrix(slice, r2 - r1 + 1, c2 - c1 + 1))
+    if (!tryNewMatrix(slice, r2 - r1 + 1, c2 - c1 + 1))
     {
-        return ERR;
+        return false;
     }
 
     for (size_t i = r1; i <= r2; i++)
@@ -158,10 +164,10 @@ int subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2
         }
     }
 
-    return OK;
+    return true;
 }
 
-static inline int tryInplaceInvert2(Matrix_T* mat)
+static inline bool tryInplaceInvert2(Matrix_T* mat)
 {
     double a11 = *(indexMatrix(mat, 0, 0));
     double a12 = *(indexMatrix(mat, 0, 1));
@@ -172,18 +178,18 @@ static inline int tryInplaceInvert2(Matrix_T* mat)
 
     if (0 == det)
     {
-        return ERR;
+        return false;
     }
 
-    *(indexMatrix(mat, 0, 0)) = a22 / det;
-    *(indexMatrix(mat, 0, 1)) = a21 / det;
-    *(indexMatrix(mat, 1, 0)) = a12 / det;
-    *(indexMatrix(mat, 1, 1)) = a11 / det;
+    *(indexMatrix(mat, 0, 0)) = +a22 / det;
+    *(indexMatrix(mat, 1, 0)) = -a21 / det;
+    *(indexMatrix(mat, 0, 1)) = -a12 / det;
+    *(indexMatrix(mat, 1, 1)) = +a11 / det;
 
-    return OK;
+    return true;
 }
 
-static inline int tryInplaceInvert3(Matrix_T* mat)
+static inline bool tryInplaceInvert3(Matrix_T* mat)
 {
     double a11 = *(indexMatrix(mat, 0, 0));
     double a12 = *(indexMatrix(mat, 0, 1));
@@ -204,24 +210,24 @@ static inline int tryInplaceInvert3(Matrix_T* mat)
 
     if (0 == det)
     {
-        return ERR;
+        return false;
     }
     
     // FIXME: Double check that this works as expected:
     *(indexMatrix(mat, 0, 0)) = (a22 * a33 - a23) * a32 / det;
-    *(indexMatrix(mat, 0, 1)) = (a23 * a31 - a21) * a33 / det;
-    *(indexMatrix(mat, 0, 2)) = (a21 * a32 - a22) * a31 / det;
-    *(indexMatrix(mat, 1, 0)) = (a13 * a32 - a12) * a33 / det;
+    *(indexMatrix(mat, 1, 0)) = (a23 * a31 - a21) * a33 / det;
+    *(indexMatrix(mat, 2, 0)) = (a21 * a32 - a22) * a31 / det;
+    *(indexMatrix(mat, 0, 1)) = (a13 * a32 - a12) * a33 / det;
     *(indexMatrix(mat, 1, 1)) = (a11 * a33 - a13) * a31 / det;
-    *(indexMatrix(mat, 1, 2)) = (a12 * a31 - a11) * a32 / det;
-    *(indexMatrix(mat, 2, 0)) = (a12 * a23 - a13) * a22 / det;
-    *(indexMatrix(mat, 2, 1)) = (a13 * a21 - a11) * a23 / det;
+    *(indexMatrix(mat, 2, 1)) = (a12 * a31 - a11) * a32 / det;
+    *(indexMatrix(mat, 0, 2)) = (a12 * a23 - a13) * a22 / det;
+    *(indexMatrix(mat, 1, 2)) = (a13 * a21 - a11) * a23 / det;
     *(indexMatrix(mat, 2, 2)) = (a11 * a22 - a12) * a21 / det;
 
-    return OK;
+    return true;
 }
 
-static inline int tryInplaceInvert4(Matrix_T* mat)
+static inline bool tryInplaceInvert4(Matrix_T* mat)
 {
     double a11 = *(indexMatrix(mat, 0, 0));
     double a12 = *(indexMatrix(mat, 1, 0));
@@ -251,38 +257,38 @@ static inline int tryInplaceInvert4(Matrix_T* mat)
 
     if (0 == det)
     {
-        return ERR;
+        return false;
     }
 
     *(indexMatrix(mat, 0, 0)) = a22 * a33 * a44 + a23 * a34 * a42 + a24 * a32 * a43 - a22 * a34 * a43 - a23 * a32 * a44 - a24 * a33 * a42 / det;
-    *(indexMatrix(mat, 1, 0)) = a12 * a34 * a43 + a13 * a32 * a44 + a14 * a33 * a42 - a12 * a33 * a44 - a13 * a34 * a42 - a14 * a32 * a43 / det;
-    *(indexMatrix(mat, 2, 0)) = a12 * a23 * a44 + a13 * a24 * a42 + a14 * a22 * a43 - a12 * a24 * a43 - a13 * a22 * a44 - a14 * a23 * a42 / det;
-    *(indexMatrix(mat, 3, 0)) = a12 * a24 * a33 + a13 * a22 * a34 + a14 * a23 * a32 - a12 * a23 * a34 - a13 * a24 * a32 - a14 * a22 * a33 / det;
-    *(indexMatrix(mat, 0, 1)) = a21 * a34 * a43 + a23 * a31 * a44 + a24 * a33 * a41 - a21 * a33 * a44 - a23 * a34 * a41 - a24 * a31 * a43 / det;
+    *(indexMatrix(mat, 0, 1)) = a12 * a34 * a43 + a13 * a32 * a44 + a14 * a33 * a42 - a12 * a33 * a44 - a13 * a34 * a42 - a14 * a32 * a43 / det;
+    *(indexMatrix(mat, 0, 2)) = a12 * a23 * a44 + a13 * a24 * a42 + a14 * a22 * a43 - a12 * a24 * a43 - a13 * a22 * a44 - a14 * a23 * a42 / det;
+    *(indexMatrix(mat, 0, 3)) = a12 * a24 * a33 + a13 * a22 * a34 + a14 * a23 * a32 - a12 * a23 * a34 - a13 * a24 * a32 - a14 * a22 * a33 / det;
+    *(indexMatrix(mat, 1, 0)) = a21 * a34 * a43 + a23 * a31 * a44 + a24 * a33 * a41 - a21 * a33 * a44 - a23 * a34 * a41 - a24 * a31 * a43 / det;
     *(indexMatrix(mat, 1, 1)) = a11 * a33 * a44 + a13 * a34 * a41 + a14 * a31 * a43 - a11 * a34 * a43 - a13 * a31 * a44 - a14 * a33 * a41 / det;
-    *(indexMatrix(mat, 2, 1)) = a11 * a24 * a43 + a13 * a21 * a44 + a14 * a23 * a41 - a11 * a23 * a44 - a13 * a24 * a41 - a14 * a21 * a43 / det;
-    *(indexMatrix(mat, 3, 1)) = a11 * a23 * a34 + a13 * a24 * a31 + a14 * a21 * a33 - a11 * a24 * a33 - a13 * a21 * a34 - a14 * a23 * a31 / det;
-    *(indexMatrix(mat, 0, 2)) = a21 * a32 * a44 + a22 * a34 * a41 + a24 * a31 * a42 - a21 * a34 * a42 - a22 * a31 * a44 - a24 * a32 * a41 / det;
-    *(indexMatrix(mat, 1, 2)) = a11 * a34 * a42 + a12 * a31 * a44 + a14 * a32 * a41 - a11 * a32 * a44 - a12 * a34 * a41 - a14 * a31 * a42 / det;
+    *(indexMatrix(mat, 1, 2)) = a11 * a24 * a43 + a13 * a21 * a44 + a14 * a23 * a41 - a11 * a23 * a44 - a13 * a24 * a41 - a14 * a21 * a43 / det;
+    *(indexMatrix(mat, 1, 3)) = a11 * a23 * a34 + a13 * a24 * a31 + a14 * a21 * a33 - a11 * a24 * a33 - a13 * a21 * a34 - a14 * a23 * a31 / det;
+    *(indexMatrix(mat, 2, 0)) = a21 * a32 * a44 + a22 * a34 * a41 + a24 * a31 * a42 - a21 * a34 * a42 - a22 * a31 * a44 - a24 * a32 * a41 / det;
+    *(indexMatrix(mat, 2, 1)) = a11 * a34 * a42 + a12 * a31 * a44 + a14 * a32 * a41 - a11 * a32 * a44 - a12 * a34 * a41 - a14 * a31 * a42 / det;
     *(indexMatrix(mat, 2, 2)) = a11 * a22 * a44 + a12 * a24 * a41 + a14 * a21 * a42 - a11 * a24 * a42 - a12 * a21 * a44 - a14 * a22 * a41 / det;
-    *(indexMatrix(mat, 3, 2)) = a11 * a24 * a32 + a12 * a21 * a34 + a14 * a22 * a31 - a11 * a22 * a34 - a12 * a24 * a31 - a14 * a21 * a32 / det;
-    *(indexMatrix(mat, 0, 3)) = a21 * a33 * a42 + a22 * a31 * a43 + a23 * a32 * a41 - a21 * a32 * a43 - a22 * a33 * a41 - a23 * a31 * a42 / det;
-    *(indexMatrix(mat, 1, 3)) = a11 * a32 * a43 + a12 * a33 * a41 + a13 * a31 * a42 - a11 * a33 * a42 - a12 * a31 * a43 - a13 * a32 * a41 / det;
-    *(indexMatrix(mat, 2, 3)) = a11 * a23 * a42 + a12 * a21 * a43 + a13 * a22 * a41 - a11 * a22 * a43 - a12 * a23 * a41 - a13 * a21 * a42 / det;
+    *(indexMatrix(mat, 2, 3)) = a11 * a24 * a32 + a12 * a21 * a34 + a14 * a22 * a31 - a11 * a22 * a34 - a12 * a24 * a31 - a14 * a21 * a32 / det;
+    *(indexMatrix(mat, 3, 0)) = a21 * a33 * a42 + a22 * a31 * a43 + a23 * a32 * a41 - a21 * a32 * a43 - a22 * a33 * a41 - a23 * a31 * a42 / det;
+    *(indexMatrix(mat, 3, 1)) = a11 * a32 * a43 + a12 * a33 * a41 + a13 * a31 * a42 - a11 * a33 * a42 - a12 * a31 * a43 - a13 * a32 * a41 / det;
+    *(indexMatrix(mat, 3, 2)) = a11 * a23 * a42 + a12 * a21 * a43 + a13 * a22 * a41 - a11 * a22 * a43 - a12 * a23 * a41 - a13 * a21 * a42 / det;
     *(indexMatrix(mat, 3, 3)) = a11 * a22 * a33 + a12 * a23 * a31 + a13 * a21 * a32 - a11 * a23 * a32 - a12 * a21 * a33 - a13 * a22 * a31 / det;
 
-    return OK;
+    return true;
 }
 
-static inline int tryInplaceInvertN(Matrix_T* mat)
+static inline bool tryInplaceInvertN(Matrix_T* mat)
 {
     // Assertion that rows == cols has already 
     // happened prior to this function call.
     size_t n = mat->cols;
     Matrix_T inv; 
-    if (!newIdentityMatrix(&inv, n))
+    if (!tryNewIdentityMatrix(&inv, n))
     {
-        return ERR;
+        return false;
     }
     double scalar;
 
@@ -298,7 +304,7 @@ static inline int tryInplaceInvertN(Matrix_T* mat)
             {
                 if (*(indexMatrix(mat, i, j)) == 0)
                 {
-                    return ERR;
+                    return false;
                 }
                 scalar = *(indexMatrix(mat, i, j)) / (*(indexMatrix(mat, j, j)));
                 inplaceScaledRowAdd(mat, i, j, -scalar);
@@ -316,18 +322,18 @@ static inline int tryInplaceInvertN(Matrix_T* mat)
         inplaceRowScale(&inv, i, scalar);
     }
 
-    free(mat->data);    // Prevent memory leak
+    free(mat->elements);    // Prevent memory leak
     *mat = inv;         // Assign `inv` to `mat` contents
 
-    return OK;
+    return true;
 }
 
-int tryInplaceInvert(Matrix_T* mat)
+bool tryInplaceInvert(Matrix_T* mat)
 {
-    int retVal = ERR;
+    int retVal = false;
     if (mat->cols != mat->rows)
     {
-        return ERR;
+        return false;
     }
 
     switch(mat->cols)
@@ -335,10 +341,10 @@ int tryInplaceInvert(Matrix_T* mat)
     case 0:
         break;
     case 1:
-        if (mat->data->data[0].fVal != 0)
+        if (mat->elements->elements[0].floating != 0)
         {
-            mat->data->data[0].fVal = (1 / mat->data->data[0].fVal);
-            retVal = OK;
+            mat->elements->elements[0].floating = (1 / mat->elements->elements[0].floating);
+            retVal = true;
         }
         break;
     case 2:
