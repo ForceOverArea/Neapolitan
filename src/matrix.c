@@ -1,17 +1,17 @@
 #include "matrix.h"
 
-bool tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
+NpStatus_T tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
 {
     if (0 == rows || 0 == cols)
     {
-        return false;
+        return INVALID_SIZE_GIVEN;
     }
 
     size_t numElems = rows * cols;
     maybeMatrix->elements = newVec(numElems);
     if (NULL == maybeMatrix->elements)
     {
-        return false;
+        return OUT_OF_MEMORY;
     }
 
     maybeMatrix->rows = rows;
@@ -23,21 +23,21 @@ bool tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
         maybeMatrix->elements->elements[i].floating = 0;
     }
 
-    return true;
+    return OK;
 }
 
-bool tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
+NpStatus_T tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
 {
     if (0 == n)
     {
-        return false;
+        return INVALID_SIZE_GIVEN;
     }
 
     size_t numElems = n * n;
     maybeMatrix->elements = newVec(numElems);
     if (NULL == maybeMatrix->elements)
     {
-        return false;
+        return OUT_OF_MEMORY;
     }
 
     maybeMatrix->rows = n;
@@ -49,7 +49,7 @@ bool tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
         maybeMatrix->elements->elements[i].floating = 0;
     }
 
-    return true;
+    return OK;
 }
 
 void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
@@ -89,18 +89,17 @@ void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar)
     }
 }
 
-bool tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
+NpStatus_T tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->cols != right->rows)
     {
-        return false;
+        return MATRIX_DIMENSION_MISMATCH;
     } 
 
     size_t n = left->cols;
-    if (!tryNewMatrix(product, left->rows, right->cols))
-    {
-        return false;
-    }
+    PROPOGATE_ERROR(
+        tryNewMatrix(product, left->rows, right->cols)
+    )
 
     for (size_t i = 0; i < left->rows; i++)
     {
@@ -118,18 +117,18 @@ bool tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* 
     return true;
 }
 
-bool tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
+NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
 {
     if (left->rows != right->rows)
     {
-        return false;
+        return MATRIX_DIMENSION_MISMATCH;
     }
 
     size_t n = left->rows;
-    if (!tryNewMatrix(augment, n, left->cols + right->cols))
-    {
-        return false;
-    }
+
+    PROPOGATE_ERROR(
+        tryNewMatrix(augment, n, left->cols + right->cols)
+    )
 
     for (size_t i = 0; i < augment->rows; i++)
     {
@@ -149,12 +148,11 @@ bool tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* r
     return true;
 }
 
-bool subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
+NpStatus_T subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
 {
-    if (!tryNewMatrix(slice, r2 - r1 + 1, c2 - c1 + 1))
-    {
-        return false;
-    }
+    PROPOGATE_ERROR(
+        tryNewMatrix(slice, r2 - r1 + 1, c2 - c1 + 1)
+    )
 
     for (size_t i = r1; i <= r2; i++)
     {
@@ -164,10 +162,10 @@ bool subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r
         }
     }
 
-    return true;
+    return OK;
 }
 
-static inline bool tryInplaceInvert2(Matrix_T* mat)
+static inline NpStatus_T tryInplaceInvert2(Matrix_T* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 0, 1));
@@ -178,7 +176,7 @@ static inline bool tryInplaceInvert2(Matrix_T* mat)
 
     if (0 == det)
     {
-        return false;
+        return ZERO_DETERMINANT;
     }
 
     *(indexMatrix(mat, 0, 0)) = +a22 / det;
@@ -186,10 +184,10 @@ static inline bool tryInplaceInvert2(Matrix_T* mat)
     *(indexMatrix(mat, 0, 1)) = -a12 / det;
     *(indexMatrix(mat, 1, 1)) = +a11 / det;
 
-    return true;
+    return OK;
 }
 
-static inline bool tryInplaceInvert3(Matrix_T* mat)
+static inline NpStatus_T tryInplaceInvert3(Matrix_T* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 0, 1));
@@ -210,7 +208,7 @@ static inline bool tryInplaceInvert3(Matrix_T* mat)
 
     if (0 == det)
     {
-        return false;
+        return ZERO_DETERMINANT;
     }
     
     // FIXME: FLOATING check that this works as expected:
@@ -224,10 +222,10 @@ static inline bool tryInplaceInvert3(Matrix_T* mat)
     *(indexMatrix(mat, 1, 2)) = (a13 * a21 - a11) * a23 / det;
     *(indexMatrix(mat, 2, 2)) = (a11 * a22 - a12) * a21 / det;
 
-    return true;
+    return OK;
 }
 
-static inline bool tryInplaceInvert4(Matrix_T* mat)
+static inline NpStatus_T tryInplaceInvert4(Matrix_T* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 1, 0));
@@ -257,7 +255,7 @@ static inline bool tryInplaceInvert4(Matrix_T* mat)
 
     if (0 == det)
     {
-        return false;
+        return ZERO_DETERMINANT;
     }
 
     *(indexMatrix(mat, 0, 0)) = a22 * a33 * a44 + a23 * a34 * a42 + a24 * a32 * a43 - a22 * a34 * a43 - a23 * a32 * a44 - a24 * a33 * a42 / det;
@@ -277,21 +275,21 @@ static inline bool tryInplaceInvert4(Matrix_T* mat)
     *(indexMatrix(mat, 3, 2)) = a11 * a23 * a42 + a12 * a21 * a43 + a13 * a22 * a41 - a11 * a22 * a43 - a12 * a23 * a41 - a13 * a21 * a42 / det;
     *(indexMatrix(mat, 3, 3)) = a11 * a22 * a33 + a12 * a23 * a31 + a13 * a21 * a32 - a11 * a23 * a32 - a12 * a21 * a33 - a13 * a22 * a31 / det;
 
-    return true;
+    return OK;
 }
 
-static inline bool tryInplaceInvertN(Matrix_T* mat)
+static inline NpStatus_T tryInplaceInvertN(Matrix_T* mat)
 {
     // Assertion that rows == cols has already 
     // happened prior to this function call.
     size_t n = mat->cols;
     Matrix_T inv; 
-    if (!tryNewIdentityMatrix(&inv, n))
-    {
-        return false;
-    }
-    FLOATING scalar;
 
+    PROPOGATE_ERROR(
+        tryNewIdentityMatrix(&inv, n)
+    )
+
+    FLOATING scalar;
     for (size_t j = 0; j < n; j++)
     {
         for (size_t i = 0; i < n; i++)
@@ -304,7 +302,7 @@ static inline bool tryInplaceInvertN(Matrix_T* mat)
             {
                 if (*(indexMatrix(mat, i, j)) == 0)
                 {
-                    return false;
+                    return UNDEFINED_VALUE;
                 }
                 scalar = *(indexMatrix(mat, i, j)) / (*(indexMatrix(mat, j, j)));
                 inplaceScaledRowAdd(mat, i, j, -scalar);
@@ -325,15 +323,15 @@ static inline bool tryInplaceInvertN(Matrix_T* mat)
     free(mat->elements);    // Prevent memory leak
     *mat = inv;             // Assign `inv` to `mat` contents
 
-    return true;
+    return OK;
 }
 
-bool tryInplaceInvert(Matrix_T* mat)
+NpStatus_T tryInplaceInvert(Matrix_T* mat)
 {
-    int retVal = false;
+    NpStatus_T retVal = UNKNOWN_ERROR;
     if (mat->cols != mat->rows)
     {
-        return false;
+        return MATRIX_DIMENSION_MISMATCH;
     }
 
     switch(mat->cols)
@@ -344,7 +342,7 @@ bool tryInplaceInvert(Matrix_T* mat)
         if (mat->elements->elements[0].floating != 0)
         {
             mat->elements->elements[0].floating = (1 / mat->elements->elements[0].floating);
-            retVal = true;
+            retVal = OK;
         }
         break;
     case 2:
