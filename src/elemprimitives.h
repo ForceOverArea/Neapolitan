@@ -2,7 +2,8 @@
 #define ELEMPRIMITIVES_H_
 
 #include <memory.h>
-#include <stdbool.h>
+
+#include "np_status.h"
 #include "vec.h"
 
 /**
@@ -42,7 +43,7 @@ GenericNode_T;
  * The function signature used by functions that govern the 
  * flux or flow through elements in the problem 
  */
-typedef bool (*FluxCalculation_P)(
+typedef NpStatus_T (*FluxCalculation_P)(
     Vec_T*,
     Vec_T*, 
     GenericNode_T*, 
@@ -73,7 +74,7 @@ typedef struct GenericElement_S
      * If this is false and the element's flux function is `observeFlux`,
      * it is assumed that the input node's potential is driven instead.
      */
-    bool drivesOutputPotential;
+    NpStatus_T drivesOutputPotential;
     /**
      * The function to use to determine the flux or 
      * flow through this element given its gain and 
@@ -87,26 +88,26 @@ GenericElement_T;
  * Performs a flux balance on the given node, returning a vector value 
  * containing the unaccounted-for flow in the system at that node.
  */
-bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node);
+NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node);
 
 /**
  * `FluxCalculation_P` function for elements that calculate a flux 
  * value through some product of the element's gain value and the 
  * adjacent nodes' potential values.
  */
-bool normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);
+NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu);
 
 /**
  * `FluxCalculation_P` function for elements that calculate a flux 
  * value by adjusting the potential of one of their nodes and observing 
  * the flow discrepancy at the adjusted node.
  */
-bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput);
+NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T drivesOutput);
 
 /**
  * `FluxCalculation_P` function for elements force a constant flux into/out 
  * of their two adjacent nodes.
  */
-bool forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);
+NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu);
 
 #endif

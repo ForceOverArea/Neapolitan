@@ -10,18 +10,16 @@
 
 typedef enum NpStatus_E
 {
+    // Success return value
     OK,
 
     // System-related errors
-
     OUT_OF_MEMORY,
 
     // Vector-related errors
-
     VECTOR_LEN_MISMATCH,
 
     // Matrix-related errors
-
     INVALID_SIZE_GIVEN,
     MATRIX_DIMENSION_MISMATCH,
     ZERO_DETERMINANT,

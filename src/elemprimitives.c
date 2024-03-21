@@ -4,7 +4,7 @@
 
 typedef FLOATING (*MathOp_T)(FLOATING opnd1, FLOATING opnd2, FLOATING g);
 
-static inline bool applyElementWise(
+static inline NpStatus_T applyElementWise(
     MathOp_T op, 
     Vec_T* result,
     Vec_T* input, 
@@ -15,7 +15,7 @@ static inline bool applyElementWise(
         output->len != gain->len ||
         gain->len != input->len)
     {
-        return false;
+        return VECTOR_LEN_MISMATCH;
     }
 
     // Calculate element-wise potential 
@@ -29,16 +29,16 @@ static inline bool applyElementWise(
         result->elements[i].floating = op(po, pi, g);
     }
 
-    return true;
+    return OK;
 }
 
-static inline bool addAssignElementWise(
+static inline NpStatus_T addAssignElementWise(
     Vec_T* sum,
     Vec_T* addend)
 {
     if (sum->len != addend->len)
     {
-        return false;
+        return VECTOR_LEN_MISMATCH;
     }
 
     // Calculate element-wise potential 
@@ -47,7 +47,7 @@ static inline bool addAssignElementWise(
         sum->elements[i].floating += addend->elements[i].floating;
     }
 
-    return true;
+    return OK;
 }
 
 /**
@@ -83,28 +83,30 @@ static inline FLOATING vectorDiff(FLOATING adnd1, FLOATING _dnu, FLOATING adnd2)
     return adnd1 - adnd2;
 }
 
-bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
+NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
 {
     size_t n = node->inputs->len;
 
     Vec_T* totalInput, * totalOutput, * tempFlux;
-    totalInput  = newVec(n);
-    totalOutput = newVec(n);
-    tempFlux    = newVec(n); 
+    totalInput = newVec(n);
     if (NULL == totalInput)
     {
-        return false;   
+        return OUT_OF_MEMORY;   
     }
-    else if (NULL == totalOutput)
+
+    totalOutput = newVec(n);
+    if (NULL == totalOutput)
     {
         free(totalInput);
-        return false;
+        return OUT_OF_MEMORY;
     }
-    else if (NULL == tempFlux)
+
+    tempFlux = newVec(n); 
+    if (NULL == tempFlux)
     {
         free(totalInput);
         free(totalOutput);
-        return false;
+        return OUT_OF_MEMORY;
     }
 
     for (size_t i = 0; i < node->inputs->len; i++)
@@ -120,12 +122,12 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
             input->outputNode);
 
         // Sum up the flux discrepancy
-        if (!addAssignElementWise(totalInput, tempFlux))
+        if (addAssignElementWise(totalInput, tempFlux))
         {
             free(totalInput);
             free(totalOutput);
             free(tempFlux);
-            return false;
+            return VECTOR_LEN_MISMATCH; // This is the only possible error to report
         }
     }
 
@@ -148,7 +150,7 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
             free(totalInput);
             free(totalOutput);
             free(tempFlux);
-            return false;
+            return VECTOR_LEN_MISMATCH; // This is the only possible error to report
         }
     }
 
@@ -161,17 +163,17 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         free(totalInput);
         free(totalOutput);
         free(tempFlux);
-        return false;
+        return VECTOR_LEN_MISMATCH; // This is the only possible error to report
     }
 
     free(totalInput);
     free(totalOutput);
     free(tempFlux);
 
-    return true;
+    return OK;
 }
 
-bool normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu)
+NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu)
 {
     if (!applyElementWise(prodDeltaGain, 
         flux, 
@@ -179,13 +181,13 @@ bool normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* o
         input->potentialVector, 
         gain))
     {
-        return false;
+        return VECTOR_LEN_MISMATCH; // This is the only possible error to report
     }
 
-    return true;
+    return OK;
 }
 
-bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput)
+NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T drivesOutput)
 {
     if (drivesOutput)
     {
@@ -195,13 +197,12 @@ bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* 
             NO_VEC, 
             gain))
         {
-            return false;
+            return VECTOR_LEN_MISMATCH;
         }
 
-        if (!fluxDiscrepancy(flux, output))
-        {
-            return false;
-        }
+        PROPOGATE_ERROR(
+            fluxDiscrepancy(flux, output)
+        )
     }
     else
     {
@@ -211,21 +212,20 @@ bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* 
             NO_VEC, 
             gain))
         {
-            return false;
+            return VECTOR_LEN_MISMATCH;
         }
 
-        if (!fluxDiscrepancy(flux, input))
-        {
-            return false;
-        }
+        PROPOGATE_ERROR(
+            fluxDiscrepancy(flux, input)
+        )
     }
 
-    return true;
+    return OK;
 }
 
-bool forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* _dnu1, GenericNode_T* _dnu2, bool _dnu3)
+NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* _dnu1, GenericNode_T* _dnu2, NpStatus_T _dnu3)
 {
     // FIXME: is this correct usage?
     (void)memcpy(flux, gain, sizeof *gain);
-    return true;
+    return OK;
 }
