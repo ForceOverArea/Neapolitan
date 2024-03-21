@@ -1,6 +1,6 @@
 #include "elemprimitives.h"
 
-#define NO_ELEMENT ((GenericElement_T*)0)
+#define NO_VEC ((Vec_T*)0)
 
 typedef FLOATING (*MathOp_T)(FLOATING opnd1, FLOATING opnd2, FLOATING g);
 
@@ -87,17 +87,24 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
 {
     size_t n = node->inputs->len;
 
-    Vec_T* totalInput, * totalOutput;
+    Vec_T* totalInput, * totalOutput, * tempFlux;
     totalInput  = newVec(n);
     totalOutput = newVec(n);
+    tempFlux    = newVec(n); 
     if (NULL == totalInput)
     {
-        return NULL;   
+        return false;   
     }
     else if (NULL == totalOutput)
     {
         free(totalInput);
-        return NULL;
+        return false;
+    }
+    else if (NULL == tempFlux)
+    {
+        free(totalInput);
+        free(totalOutput);
+        return false;
     }
 
     for (size_t i = 0; i < node->inputs->len; i++)
@@ -106,23 +113,16 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         GenericElement_T* input = (GenericElement_T*)(node->inputs->elements[i].pointer);
 
         // Perform it's flux calculation
-        Vec_T* inputFlux;
         input->flux(
-            inputFlux,
+            tempFlux,
             input->gainVector, 
             input->inputNode, 
             input->outputNode);
 
-        // Abort if NULL
-        if (NULL == inputFlux)
-        {
-            return NULL;
-        }
-
         // Sum up the flux discrepancy
-        if (!addAssignElementWise(totalInput, inputFlux))
+        if (!addAssignElementWise(totalInput, tempFlux))
         {
-            return NULL;
+            return false;
         }
     }
 
@@ -133,40 +133,39 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         GenericElement_T* output = (GenericElement_T*)(node->outputs->elements[i].pointer);
 
         // Perform it's flux calculation
-        Vec_T* outputFlux;
         output->flux(
-            outputFlux,
+            tempFlux,
             output->gainVector, 
             output->inputNode, 
             output->outputNode);
 
-        // Abort if NULL
-        if (NULL == outputFlux)
-        {
-            return NULL;
-        }
-
         // Sum up the flux discrepancy
-        if (!addAssignElementWise(totalOutput, outputFlux))
+        if (!addAssignElementWise(totalOutput, tempFlux))
         {
-            return NULL;
+            return false;
         }
     }
 
-    if(!applyElementWise(
-        vectorDiff,
+    if(!applyElementWise(vectorDiff,
         fluxDiscrep,
         totalInput,
-        NO_ELEMENT,
+        NO_VEC,
         totalOutput))
     {
-
+        free(totalInput);
+        free(totalOutput);
+        free(tempFlux);
+        return false;
     }
+
+    free(totalInput);
+    free(totalOutput);
+    free(tempFlux);
+    return true;
 }
 
 bool normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu)
 {
-    size_t n = input->potentialVector->len;
     if (!applyElementWise(prodDeltaGain, 
         flux, 
         output->potentialVector, 
@@ -181,14 +180,12 @@ bool normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* o
 
 bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput)
 {
-    size_t n = input->potentialVector->len;
-
     if (drivesOutput)
     {
         if (!applyElementWise(vectorSum, 
             output->potentialVector, 
             input->potentialVector, 
-            NO_ELEMENT, 
+            NO_VEC, 
             gain))
         {
             return false;
@@ -204,7 +201,7 @@ bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* 
         if (!applyElementWise(vectorSum, 
             input->potentialVector, 
             output->potentialVector, 
-            NO_ELEMENT, 
+            NO_VEC, 
             gain))
         {
             return false;
@@ -215,7 +212,6 @@ bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* 
             return false;
         }
     }
-
     return true;
 }
 

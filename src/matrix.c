@@ -323,7 +323,7 @@ static inline bool tryInplaceInvertN(Matrix_T* mat)
     }
 
     free(mat->elements);    // Prevent memory leak
-    *mat = inv;         // Assign `inv` to `mat` contents
+    *mat = inv;             // Assign `inv` to `mat` contents
 
     return true;
 }

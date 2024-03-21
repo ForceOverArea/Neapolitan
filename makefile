@@ -6,7 +6,7 @@ LIBPATH = build/lib/libneapolitan.so
 OBJPATH = build/obj
 BINPATH = build/bin
 
-OBJECTS = build/obj/vec.o build/obj/matrix.o
+OBJECTS = build/obj/vec.o build/obj/matrix.o build/obj/elemprimitives.o
 
 # =============
 # Build recipes
@@ -19,6 +19,9 @@ build/obj/vec.o:
 
 build/obj/matrix.o: build/obj/vec.o
 	$(CC) $(CFLAGS) src/matrix.c -o $(OBJPATH)/matrix.o
+
+build/obj/elemprimitives.o: build/obj/vec.o
+	$(CC) $(CFLAGS) src/elemprimitives.c -o $(OBJPATH)/elemprimitives.o
 
 # =====
 # Clean
