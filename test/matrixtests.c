@@ -6,10 +6,10 @@ TEST(matrix_inverts_correctly)
     Matrix_T mat2x2;
     ASSERT(tryNewMatrix(&mat2x2, 2, 2))
 
-    double* a11 = indexMatrix(&mat2x2, 0, 0);
-    double* a12 = indexMatrix(&mat2x2, 0, 1);
-    double* a21 = indexMatrix(&mat2x2, 1, 0);
-    double* a22 = indexMatrix(&mat2x2, 1, 1);
+    FLOATING* a11 = indexMatrix(&mat2x2, 0, 0);
+    FLOATING* a12 = indexMatrix(&mat2x2, 0, 1);
+    FLOATING* a21 = indexMatrix(&mat2x2, 1, 0);
+    FLOATING* a22 = indexMatrix(&mat2x2, 1, 1);
 
     *a11 = -1.0;
     *a12 = +1.5;

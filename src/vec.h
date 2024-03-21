@@ -25,7 +25,7 @@ typedef struct Vec_S
 } 
 Vec_T;
 
-inline VecElement_T doubleElem(double elem)
+inline VecElement_T FLOATINGElem(FLOATING elem)
 {
     VecElement_T retVal;
     retVal.floating = elem;

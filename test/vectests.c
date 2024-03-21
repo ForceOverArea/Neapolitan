@@ -1,7 +1,7 @@
 #include "harness.h"
 #include "vec.h"
 
-TEST(vec_capacity_doubles_at_correct_number_of_elements)
+TEST(vec_capacity_FLOATINGs_at_correct_number_of_elements)
 {
     Vec_T* myVec = newVec(0);
     ASSERT(myVec != NULL)
@@ -26,6 +26,6 @@ TEST(vec_capacity_doubles_at_correct_number_of_elements)
 
 int main(void)
 {
-    vec_capacity_doubles_at_correct_number_of_elements();
+    vec_capacity_FLOATINGs_at_correct_number_of_elements();
     return 0;
 }
