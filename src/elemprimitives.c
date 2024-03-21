@@ -122,6 +122,9 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         // Sum up the flux discrepancy
         if (!addAssignElementWise(totalInput, tempFlux))
         {
+            free(totalInput);
+            free(totalOutput);
+            free(tempFlux);
             return false;
         }
     }
@@ -142,6 +145,9 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         // Sum up the flux discrepancy
         if (!addAssignElementWise(totalOutput, tempFlux))
         {
+            free(totalInput);
+            free(totalOutput);
+            free(tempFlux);
             return false;
         }
     }
@@ -161,6 +167,7 @@ bool fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
     free(totalInput);
     free(totalOutput);
     free(tempFlux);
+
     return true;
 }
 
@@ -212,6 +219,7 @@ bool observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* 
             return false;
         }
     }
+
     return true;
 }
 
