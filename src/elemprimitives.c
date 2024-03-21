@@ -83,6 +83,49 @@ static inline FLOATING vectorDiff(FLOATING adnd1, FLOATING _dnu, FLOATING adnd2)
     return adnd1 - adnd2;
 }
 
+NpStatus_T tryNewElement(
+    GenericElement_T* elem, 
+    size_t dimension, 
+    FluxCalculation_P func)
+{
+    elem->gainVector = newVec(dimension);
+    if (NULL == elem->gainVector)
+    {
+        return OUT_OF_MEMORY;
+    }
+    elem->inputNode = NULL;
+    elem->outputNode = NULL;
+    elem->flux = func;
+}
+
+NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension)
+{   
+    node->lockingElement = NULL;
+
+    node->potentialVector = newVec(dimension);
+    if (NULL == node->potentialVector)
+    {
+        return OUT_OF_MEMORY;
+    }
+
+    node->inputs = newVec(0);
+    if (NULL == node->inputs)
+    {
+        free(node->potentialVector);
+        return OUT_OF_MEMORY;
+    }
+
+    node->outputs = newVec(0);
+    if (NULL == node->outputs)
+    {
+        free(node->potentialVector);
+        free(node->inputs);
+        return OUT_OF_MEMORY;
+    }
+
+    return OK;
+}
+
 NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
 {
     size_t n = node->inputs->len;

@@ -2,6 +2,7 @@
 #define ELEMPRIMITIVES_H_
 
 #include <memory.h>
+#include <stdbool.h>
 
 #include "np_status.h"
 #include "vec.h"
@@ -74,7 +75,7 @@ typedef struct GenericElement_S
      * If this is false and the element's flux function is `observeFlux`,
      * it is assumed that the input node's potential is driven instead.
      */
-    NpStatus_T drivesOutputPotential;
+    bool drivesOutputPotential;
     /**
      * The function to use to determine the flux or 
      * flow through this element given its gain and 
@@ -83,6 +84,19 @@ typedef struct GenericElement_S
     FluxCalculation_P flux;
 } 
 GenericElement_T;
+
+/**
+ * Initializes a new, unlocked node with empty vectors for new elements
+ * and an uninitialized potential vector of the given dimension. 
+ */
+NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension);
+
+/**
+ * Initializes a new generic element with no connected nodes, no
+ * flux function, and empty gain potential vectors of the given 
+ * dimension. 
+ */
+NpStatus_T tryNewElement(GenericElement_T* elem, size_t dimension, FluxCalculation_P func);
 
 /**
  * Performs a flux balance on the given node, returning a vector value 
