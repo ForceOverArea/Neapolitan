@@ -1,7 +1,6 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
-#include <stdbool.h>
 #include "np_status.h"
 #include "vec.h" // Also includes stdlib.h
 

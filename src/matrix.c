@@ -114,7 +114,7 @@ NpStatus_T tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matr
         }
     }
 
-    return true;
+    return OK;
 }
 
 NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
@@ -145,7 +145,7 @@ NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matri
         }
     }
 
-    return true;
+    return OK;
 }
 
 NpStatus_T subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
