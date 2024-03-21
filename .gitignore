@@ -1,4 +1,5 @@
 .vscode
-CNeapolitan/obj/*
-CNeapolitan/lib/*
+build/bin/*
+build/lib/*
+build/obj/*
 Neapolitan/**/__pycache__
