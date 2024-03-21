@@ -63,7 +63,7 @@ void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
     }
 }
 
-void inplaceRowScale(Matrix_T* mat, size_t row, double scalar)
+void inplaceRowScale(Matrix_T* mat, size_t row, FLOATING scalar)
 {
     for (size_t j = 0; j < mat->cols; j++)
     {
@@ -80,7 +80,7 @@ void inplaceRowAdd(Matrix_T* mat, size_t r1, size_t r2)
     }
 }
 
-void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, double scalar)
+void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar)
 {
     for (size_t j = 0; j < mat->cols; j++)
     {

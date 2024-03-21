@@ -5,23 +5,25 @@
 
 #define MIN_VEC_CAPACITY 8
 
-union VecElement_U
+#define FLOATING double
+#define POINTER void*
+#define INTEGRAL size_t
+
+typedef union VecElement_U
 {
-    double floating;
-    void* pointer;
-    size_t integral;
-};
+    FLOATING floating;    // size A
+    POINTER pointer;      // size B
+    INTEGRAL integral;    // size B
+} 
+VecElement_T;
 
-typedef union VecElement_U VecElement_T;
-
-struct Vec_S
+typedef struct Vec_S
 {
     size_t len;
     size_t capacity;
     VecElement_T elements[];
-};
-
-typedef struct Vec_S Vec_T;
+} 
+Vec_T;
 
 inline VecElement_T doubleElem(double elem)
 {

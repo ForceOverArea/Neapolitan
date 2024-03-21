@@ -4,30 +4,29 @@
 #include <stdbool.h>
 #include "vec.h" // Also includes stdlib.h
 
-struct Matrix_S
+typedef struct Matrix_S
 {
     size_t rows, cols;
     Vec_T* elements;
-};
-
-typedef struct Matrix_S Matrix_T;
+}
+Matrix_T;
 
 bool tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols);
 
 bool tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n);
 
-double* indexMatrix(const Matrix_T* mat, size_t i, size_t j)
+FLOATING* indexMatrix(const Matrix_T* mat, size_t i, size_t j)
 {
     return &(mat->elements->elements[i * mat->cols + j].floating);
 }
 
 void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2);
 
-void inplaceRowScale(Matrix_T* mat, size_t row, double scalar);
+void inplaceRowScale(Matrix_T* mat, size_t row, FLOATING scalar);
 
 void inplaceRowAdd(Matrix_T* mat, size_t r1, size_t r2);
 
-void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, double scalar);
+void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar);
 
 bool tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right);
 
