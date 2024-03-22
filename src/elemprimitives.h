@@ -48,7 +48,8 @@ typedef NpStatus_T (*FluxCalculation_P)(
     Vec_T*,
     Vec_T*, 
     GenericNode_T*, 
-    GenericNode_T*);
+    GenericNode_T*,
+    bool);
 
 /**
  * An element in a nodal analysis problem.
@@ -109,19 +110,19 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node);
  * value through some product of the element's gain value and the 
  * adjacent nodes' potential values.
  */
-NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu);
+NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);
 
 /**
  * `FluxCalculation_P` function for elements that calculate a flux 
  * value by adjusting the potential of one of their nodes and observing 
  * the flow discrepancy at the adjusted node.
  */
-NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T drivesOutput);
+NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput);
 
 /**
  * `FluxCalculation_P` function for elements force a constant flux into/out 
  * of their two adjacent nodes.
  */
-NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu);
+NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);
 
 #endif

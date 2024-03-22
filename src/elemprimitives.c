@@ -96,6 +96,8 @@ NpStatus_T tryNewElement(
     elem->inputNode = NULL;
     elem->outputNode = NULL;
     elem->flux = func;
+
+    return OK;
 }
 
 NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension)
@@ -162,7 +164,8 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
             tempFlux,
             input->gainVector, 
             input->inputNode, 
-            input->outputNode);
+            input->outputNode,
+            input->drivesOutputPotential);
 
         // Sum up the flux discrepancy
         if (addAssignElementWise(totalInput, tempFlux))
@@ -185,7 +188,8 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
             tempFlux,
             output->gainVector, 
             output->inputNode, 
-            output->outputNode);
+            output->outputNode,
+            output->drivesOutputPotential);
 
         // Sum up the flux discrepancy
         if (!addAssignElementWise(totalOutput, tempFlux))
@@ -216,7 +220,7 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
     return OK;
 }
 
-NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T _dnu)
+NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu)
 {
     if (!applyElementWise(prodDeltaGain, 
         flux, 
@@ -230,7 +234,7 @@ NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNod
     return OK;
 }
 
-NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, NpStatus_T drivesOutput)
+NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput)
 {
     if (drivesOutput)
     {
@@ -266,7 +270,7 @@ NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNo
     return OK;
 }
 
-NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* _dnu1, GenericNode_T* _dnu2, NpStatus_T _dnu3)
+NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* _dnu1, GenericNode_T* _dnu2, bool _dnu3)
 {
     // FIXME: is this correct usage?
     (void)memcpy(flux, gain, sizeof *gain);

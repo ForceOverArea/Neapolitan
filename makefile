@@ -48,3 +48,8 @@ matrixtests: build
 	$(CC) $(TEST_CFLAGS) test/matrixtests.c -o $(OBJPATH)/matrixtests.o
 	$(CC) -Wall $(OBJPATH)/matrixtests.o $(LIBPATH) -o $(BINPATH)/matrixtests
 	./$(BINPATH)/matrixtests
+
+elemprimitivestests: build
+	$(CC) $(TEST_CFLAGS) test/elemprimitivestests.c -o $(OBJPATH)/elemprimitivestests.o
+	$(CC) -Wall $(OBJPATH)/elemprimitivestests.o $(LIBPATH) -o $(BINPATH)/elemprimitivestests
+	./$(BINPATH)/elemprimitivestests
