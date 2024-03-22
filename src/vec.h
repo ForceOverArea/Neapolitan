@@ -25,21 +25,21 @@ typedef struct Vec_S
 } 
 Vec_T;
 
-inline VecElement_T FLOATINGElem(FLOATING elem)
+inline VecElement_T fltElem(FLOATING elem)
 {
     VecElement_T retVal;
     retVal.floating = elem;
     return retVal;
 }
 
-inline VecElement_T ptrElem(void* elem)
+inline VecElement_T ptrElem(POINTER elem)
 {
     VecElement_T retVal;
     retVal.pointer = elem;
     return retVal;
 }
 
-inline VecElement_T intElem(size_t elem)
+inline VecElement_T intElem(INTEGRAL elem)
 {
     VecElement_T retVal;
     retVal.integral = elem;

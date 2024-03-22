@@ -14,6 +14,9 @@ TEST(normal_elem_calculates_flux_correctly)
     e1.inputNode = &n1;
     e1.outputNode = &n2;
 
+    pushToVec(n1.outputs, (VecElement_T){ .pointer = &e1 });
+    pushToVec(n2.inputs,  (VecElement_T){ .pointer = &e1 });
+
     // Delta V of 3V
     n1.potentialVector->elements[0].floating = 3; // 3V
     n2.potentialVector->elements[0].floating = 0; // 0V
@@ -26,9 +29,11 @@ TEST(normal_elem_calculates_flux_correctly)
     Vec_T* current = newVec(1); 
     ASSERT(NULL != current)
 
+    END_TEST
+
     ASSERT_OK(fluxDiscrepancy(current, &n1))
     ASSERT_EQ(current->elements[0].floating, -resistance, %lf)
-    
+
     ASSERT_OK(fluxDiscrepancy(current, &n2))
     ASSERT_EQ(current->elements[0].floating, resistance, %lf)
 

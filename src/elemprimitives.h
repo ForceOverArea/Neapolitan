@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #include "np_status.h"
-#include "vec.h"
+#include "vec.h" // also includes stdlib.h
 
 /**
  * A node in a nodal analysis problem.

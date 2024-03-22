@@ -33,9 +33,9 @@ if ((expected) != (actual))\
 }
 
 #define ASSERT_OK(npStatusFn)\
-if (0 != (unsigned long)(npStatusFn))\
+if (0 != (size_t)(npStatusFn))\
 {\
-    printf("FAILED (assertion on line %d)\n", __LINE__);\
+    printf("FAILED (ok status assertion on line %d. Status: %zu)\n", __LINE__, (size_t)(npStatusFn));\
     return;\
 }\
 
