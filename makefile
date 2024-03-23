@@ -42,14 +42,17 @@ clean: delete regen
 vectests: build
 	$(CC) $(TEST_CFLAGS) test/vectests.c -o $(OBJPATH)/vectests.o
 	$(CC) -Wall $(OBJPATH)/vectests.o $(LIBPATH) -o $(BINPATH)/vectests
+	clear
 	./$(BINPATH)/vectests
 	
 matrixtests: build
 	$(CC) $(TEST_CFLAGS) test/matrixtests.c -o $(OBJPATH)/matrixtests.o
 	$(CC) -Wall $(OBJPATH)/matrixtests.o $(LIBPATH) -o $(BINPATH)/matrixtests
+	clear
 	./$(BINPATH)/matrixtests
 
 elemprimitivestests: build
 	$(CC) $(TEST_CFLAGS) test/elemprimitivestests.c -o $(OBJPATH)/elemprimitivestests.o
 	$(CC) -Wall $(OBJPATH)/elemprimitivestests.o $(LIBPATH) -o $(BINPATH)/elemprimitivestests
+	clear
 	./$(BINPATH)/elemprimitivestests

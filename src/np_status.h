@@ -2,11 +2,13 @@
 #define NP_STATUS_H_
 
 #define PROPOGATE_ERROR(routine)\
+{\
     NpStatus_T stat = (routine);\
     if (OK != stat)\
     {\
         return stat;\
-    }
+    }\
+}
 
 typedef enum NpStatus_E
 {

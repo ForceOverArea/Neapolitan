@@ -36,6 +36,8 @@ Vec_T;
 
 Vec_T* newVec(size_t numElems);
 
+Vec_T* newVecWithLen(size_t numElems);
+
 Vec_T* pushToVec(Vec_T* vec, VecElement_T elem);
 
 VecElement_T popFromVec(Vec_T* vec);

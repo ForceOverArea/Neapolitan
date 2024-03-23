@@ -2,10 +2,8 @@
 #define ELEMPRIMITIVES_H_
 
 #include <memory.h>
-#include <stdbool.h>
 
-#include "np_status.h"
-#include "vec.h" // also includes stdlib.h
+#include "vec.h" // also includes stdlib.h, stdbool.h, np_status.h
 
 /**
  * A node in a nodal analysis problem.
@@ -44,7 +42,7 @@ GenericNode_T;
  * The function signature used by functions that govern the 
  * flux or flow through elements in the problem 
  */
-typedef NpStatus_T (*FluxCalculation_P)(
+typedef NpStatus_T (*FluxCalculation_F)(
     Vec_T*,
     Vec_T*, 
     GenericNode_T*, 
@@ -82,9 +80,16 @@ typedef struct GenericElement_S
      * flow through this element given its gain and 
      * two connected nodes.
      */
-    FluxCalculation_P flux;
+    FluxCalculation_F flux;
 } 
 GenericElement_T;
+
+/**
+ * Initializes a new generic element with no connected nodes, no
+ * flux function, and empty gain potential vectors of the given 
+ * dimension. 
+ */
+NpStatus_T tryNewElement(GenericElement_T* elem, size_t dimension, FluxCalculation_F func);
 
 /**
  * Initializes a new, unlocked node with empty vectors for new elements
@@ -93,34 +98,27 @@ GenericElement_T;
 NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension);
 
 /**
- * Initializes a new generic element with no connected nodes, no
- * flux function, and empty gain potential vectors of the given 
- * dimension. 
- */
-NpStatus_T tryNewElement(GenericElement_T* elem, size_t dimension, FluxCalculation_P func);
-
-/**
  * Performs a flux balance on the given node, returning a vector value 
  * containing the unaccounted-for flow in the system at that node.
  */
 NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node);
 
 /**
- * `FluxCalculation_P` function for elements that calculate a flux 
+ * `FluxCalculation_F` function for elements that calculate a flux 
  * value through some product of the element's gain value and the 
  * adjacent nodes' potential values.
  */
 NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);
 
 /**
- * `FluxCalculation_P` function for elements that calculate a flux 
+ * `FluxCalculation_F` function for elements that calculate a flux 
  * value by adjusting the potential of one of their nodes and observing 
  * the flow discrepancy at the adjusted node.
  */
 NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput);
 
 /**
- * `FluxCalculation_P` function for elements force a constant flux into/out 
+ * `FluxCalculation_F` function for elements force a constant flux into/out 
  * of their two adjacent nodes.
  */
 NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu);

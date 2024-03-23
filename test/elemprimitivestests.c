@@ -16,19 +16,19 @@ TEST(normal_elem_calculates_flux_correctly)
     e1.inputNode = &n1;
     e1.outputNode = &n2;
 
-    pushToVec(n1.outputs, (VecElement_T){ .pointer = &e1 });
-    pushToVec(n2.inputs,  (VecElement_T){ .pointer = &e1 });
+    pushToVec(n1.outputs, PTR_ELEM(&e1));
+    pushToVec(n2.inputs,  PTR_ELEM(&e1));
 
     // Delta V of 3V
-    pushToVec(n1.potentialVector, (VecElement_T){ .floating = 3 }); // 3V
-    pushToVec(n2.potentialVector, (VecElement_T){ .floating = 0 }); // 0V
+    pushToVec(n1.potentialVector, FLT_ELEM(9)); // 3V
+    pushToVec(n2.potentialVector, FLT_ELEM(0)); // 0V
 
     // Resistance of 3 ohms
     FLOATING resistance = 3;
-    pushToVec(e1.gainVector, (VecElement_T){ .floating = 1/resistance });
+    pushToVec(e1.gainVector, FLT_ELEM(1/resistance));
 
     Vec_T* current = newVec(1); 
-    pushToVec(current, (VecElement_T){ .floating = 0 });
+    pushToVec(current, FLT_ELEM(3));
     ASSERT(NULL != current)
 
     ASSERT_OK(fluxDiscrepancy(current, &n1))
@@ -44,7 +44,6 @@ TEST(normal_elem_calculates_flux_correctly)
 
 int main(void)
 {
-    vector_sum_works();
     normal_elem_calculates_flux_correctly();
     return 0;
 }
