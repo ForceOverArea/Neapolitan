@@ -211,7 +211,6 @@ static inline NpStatus_T tryInplaceInvert3(Matrix_T* mat)
         return ZERO_DETERMINANT;
     }
     
-    // FIXME: FLOATING check that this works as expected:
     *(indexMatrix(mat, 0, 0)) = (a22 * a33 - a23) * a32 / det;
     *(indexMatrix(mat, 1, 0)) = (a23 * a31 - a21) * a33 / det;
     *(indexMatrix(mat, 2, 0)) = (a21 * a32 - a22) * a31 / det;

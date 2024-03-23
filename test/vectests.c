@@ -1,7 +1,37 @@
 #include "harness.h"
 #include "vec.h"
 
-TEST(vec_capacity_FLOATINGs_at_correct_number_of_elements)
+Vec_T* newVec123(void)
+{
+    Vec_T* vec = newVec(3);
+
+    pushToVec(vec, FLT_ELEM(1));
+    pushToVec(vec, FLT_ELEM(2));
+    pushToVec(vec, FLT_ELEM(3));
+
+    return vec;
+}
+
+TEST(vector_sum_works)
+{
+    Vec_T* vec1 = newVec123();
+    Vec_T* vec2 = newVec123();
+    Vec_T* result = newVec123();
+
+    elementWiseAdd(result, vec1, vec2, true);
+
+    ASSERT_EQ(2.0, result->elements[0].floating, %lf)
+    ASSERT_EQ(4.0, result->elements[1].floating, %lf)
+    ASSERT_EQ(6.0, result->elements[2].floating, %lf)
+
+    free(vec1);
+    free(vec2);
+    free(result);
+
+    END_TEST
+}
+
+TEST(vec_capacity_doubles_at_correct_number_of_elements)
 {
     Vec_T* myVec = newVec(0);
     ASSERT(myVec != NULL)
@@ -26,6 +56,7 @@ TEST(vec_capacity_FLOATINGs_at_correct_number_of_elements)
 
 int main(void)
 {
-    vec_capacity_FLOATINGs_at_correct_number_of_elements();
+    vector_sum_works();
+    vec_capacity_doubles_at_correct_number_of_elements();
     return 0;
 }

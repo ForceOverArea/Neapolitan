@@ -1,8 +1,7 @@
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
-#include "np_status.h"
-#include "vec.h" // Also includes stdlib.h
+#include "vec.h" // also includes stdlib.h, stdbool.h, np_status.h
 
 typedef struct Matrix_S
 {
