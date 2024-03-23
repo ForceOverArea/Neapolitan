@@ -6,7 +6,7 @@ LIBPATH = build/lib/libneapolitan.so
 OBJPATH = build/obj
 BINPATH = build/bin
 
-OBJECTS = build/obj/vec.o build/obj/matrix.o build/obj/elemprimitives.o
+OBJECTS = build/obj/vec.o build/obj/matrix.o build/obj/elems.o
 
 # =============
 # Build recipes
@@ -20,8 +20,8 @@ build/obj/vec.o:
 build/obj/matrix.o: build/obj/vec.o
 	$(CC) $(CFLAGS) src/matrix.c -o $(OBJPATH)/matrix.o
 
-build/obj/elemprimitives.o: build/obj/vec.o
-	$(CC) $(CFLAGS) src/elemprimitives.c -o $(OBJPATH)/elemprimitives.o
+build/obj/elems.o: build/obj/vec.o
+	$(CC) $(CFLAGS) src/elems.c -o $(OBJPATH)/elems.o
 
 # =====
 # Clean
@@ -51,8 +51,8 @@ matrixtests: build
 	clear
 	./$(BINPATH)/matrixtests
 
-elemprimitivestests: build
-	$(CC) $(TEST_CFLAGS) test/elemprimitivestests.c -o $(OBJPATH)/elemprimitivestests.o
-	$(CC) -Wall $(OBJPATH)/elemprimitivestests.o $(LIBPATH) -o $(BINPATH)/elemprimitivestests
+elemstests: build
+	$(CC) $(TEST_CFLAGS) test/elemstests.c -o $(OBJPATH)/elemstests.o
+	$(CC) -Wall $(OBJPATH)/elemstests.o $(LIBPATH) -o $(BINPATH)/elemstests
 	clear
-	./$(BINPATH)/elemprimitivestests
+	./$(BINPATH)/elemstests

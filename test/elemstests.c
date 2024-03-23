@@ -1,5 +1,5 @@
 #include "harness.h"
-#include "elemprimitives.h"
+#include "elems.h"
 
 TEST(normal_elem_calculates_flux_correctly)
 {

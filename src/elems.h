@@ -1,5 +1,5 @@
-#ifndef ELEMPRIMITIVES_H_
-#define ELEMPRIMITIVES_H_
+#ifndef ELEMS_H_
+#define ELEMS_H_
 
 #include <memory.h>
 
