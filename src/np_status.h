@@ -1,6 +1,11 @@
 #ifndef NP_STATUS_H_
 #define NP_STATUS_H_
 
+/**
+ * A macro that checks if a routine failed 
+ * and propogates THAT routine's status code
+ * out of the wrapping function. 
+ */
 #define PROPOGATE_ERROR(routine)\
 {\
     NpStatus_T stat = (routine);\
