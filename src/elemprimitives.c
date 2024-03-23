@@ -113,7 +113,6 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
         return OUT_OF_MEMORY;
     }
 
-    // printf("inputs: %zu", node->inputs->len);
     for (size_t i = 0; i < node->inputs->len; i++)
     {
         // Get the element from the inputs list
@@ -138,7 +137,6 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
     }
 
     // Rinse and repeat for outputs
-    // printf("outputs: %zu", node->outputs->len);
     for (size_t i = 0; i < node->outputs->len; i++)
     {
         // Get the element from the outputs list

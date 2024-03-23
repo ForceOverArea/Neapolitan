@@ -109,9 +109,6 @@ NpStatus_T elementWiseAdd(Vec_T* sum, Vec_T* lAddend, Vec_T* rAddend, bool isFlo
 
 NpStatus_T elementWiseDiff(Vec_T* diff, Vec_T* minuend, Vec_T* subtrahend, bool isFloat)
 {
-    printf("%zu\n", diff->len);
-    printf("%zu\n", minuend->len);
-    printf("%zu\n", subtrahend->len);
     if (diff->len != minuend->len || minuend->len != subtrahend->len)
     {
         return VECTOR_LEN_MISMATCH;
