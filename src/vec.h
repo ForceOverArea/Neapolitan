@@ -46,6 +46,10 @@ NpStatus_E elementWiseAdd(Vec_S* sum, Vec_S* lAddend, Vec_S* rAddend, bool isFlo
 
 NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat);
 
-NpStatus_E elementWiseProd(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat);
+NpStatus_E elementWiseProd(Vec_S* prod, Vec_S* lFactor, Vec_S* rFactor, bool isFloat);
+
+NpStatus_E addAssignElementWise(Vec_S* sum, Vec_S* addend);
+
+NpStatus_E subAssignElementWise(Vec_S* difference, Vec_S* subtrahend);
 
 #endif

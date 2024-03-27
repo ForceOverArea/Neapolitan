@@ -3,11 +3,11 @@
 
 Vec_S* newVec123(void)
 {
-    Vec_S* vec = newVec(3);
+    Vec_S* vec = newVecWithLen(3);
 
-    pushToVec(vec, FLT_ELEM(1));
-    pushToVec(vec, FLT_ELEM(2));
-    pushToVec(vec, FLT_ELEM(3));
+    vec->elements[0].floating = 1;
+    vec->elements[1].floating = 2;
+    vec->elements[2].floating = 3;
 
     return vec;
 }
