@@ -24,24 +24,6 @@ static inline NpStatus_E prodDeltaGain(
     return OK;
 }
 
-static inline NpStatus_E addAssignElementWise(
-    Vec_S* sum,
-    Vec_S* addend)
-{
-    if (sum->len != addend->len)
-    {
-        return VECTOR_LEN_MISMATCH;
-    }
-
-    // Calculate element-wise potential 
-    for (size_t i = 0; i < sum->len; i++)
-    {
-        sum->elements[i].floating += addend->elements[i].floating;
-    }
-
-    return OK;
-}
-
 NpStatus_E tryNewElement(
     GenericElement_S* elem, 
     size_t dimension, 
