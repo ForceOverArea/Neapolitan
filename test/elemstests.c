@@ -20,8 +20,8 @@ TEST(normal_elem_calculates_flux_correctly)
     pushToVec(n2.inputs,  PTR_ELEM(&e1));
 
     // Delta V of 3V
-    pushToVec(n1.potentialVector, FLT_ELEM(9)); // 3V
-    pushToVec(n2.potentialVector, FLT_ELEM(0)); // 0V
+    n1.potentialVector->elements[0] = FLT_ELEM(9); // 9V
+    n2.potentialVector->elements[0] = FLT_ELEM(0); // 0V
 
     // Resistance of 3 ohms
     FLOATING resistance = 3;

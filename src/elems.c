@@ -45,7 +45,7 @@ NpStatus_E tryNewNode(GenericNode_S* node, size_t dimension)
 {   
     node->lockingElement = NULL;
 
-    node->potentialVector = newVec(dimension);
+    node->potentialVector = newVecWithLen(dimension);
     if (NULL == node->potentialVector)
     {
         return OUT_OF_MEMORY;

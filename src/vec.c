@@ -118,7 +118,7 @@ NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool 
         for (size_t i = 0; i < n; i++)
         {
             diff->elements[i].floating = 
-                minuend->elements[i].floating * subtrahend->elements[i].floating;
+                minuend->elements[i].floating - subtrahend->elements[i].floating;
         }
     }
     else
@@ -126,7 +126,7 @@ NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool 
         for (size_t i = 0; i < n; i++)
         {
             diff->elements[i].integral = 
-                minuend->elements[i].integral * subtrahend->elements[i].integral;
+                minuend->elements[i].integral - subtrahend->elements[i].integral;
         }
     }
 
