@@ -3,7 +3,7 @@
 
 TEST(matrix_inverts_correctly)
 {
-    Matrix_T mat2x2;
+    Matrix_S mat2x2;
     ASSERT(tryNewMatrix(&mat2x2, 2, 2))
 
     FLOATING* a11 = indexMatrix(&mat2x2, 0, 0);

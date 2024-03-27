@@ -1,9 +1,9 @@
 #include "harness.h"
 #include "vec.h"
 
-Vec_T* newVec123(void)
+Vec_S* newVec123(void)
 {
-    Vec_T* vec = newVec(3);
+    Vec_S* vec = newVec(3);
 
     pushToVec(vec, FLT_ELEM(1));
     pushToVec(vec, FLT_ELEM(2));
@@ -14,9 +14,9 @@ Vec_T* newVec123(void)
 
 TEST(vector_sum_works)
 {
-    Vec_T* vec1 = newVec123();
-    Vec_T* vec2 = newVec123();
-    Vec_T* result = newVec123();
+    Vec_S* vec1 = newVec123();
+    Vec_S* vec2 = newVec123();
+    Vec_S* result = newVec123();
 
     elementWiseAdd(result, vec1, vec2, true);
 
@@ -33,16 +33,16 @@ TEST(vector_sum_works)
 
 TEST(vec_capacity_doubles_at_correct_number_of_elements)
 {
-    Vec_T* myVec = newVec(0);
+    Vec_S* myVec = newVec(0);
     ASSERT(myVec != NULL)
 
     // Add 9 elements, we will alloc for 16
     for (size_t i = 0; i < 9; i++)
     {
-        VecElement_T myElem;
+        VecElement_U myElem;
         myElem.floating = 0;
 
-        Vec_T* tmp = pushToVec(myVec, myElem);
+        Vec_S* tmp = pushToVec(myVec, myElem);
         ASSERT(tmp != NULL)
 
         myVec = tmp; 

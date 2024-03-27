@@ -1,6 +1,6 @@
 #include "matrix.h"
 
-NpStatus_T tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
+NpStatus_E tryNewMatrix(Matrix_S* maybeMatrix, size_t rows, size_t cols)
 {
     if (0 == rows || 0 == cols)
     {
@@ -26,7 +26,7 @@ NpStatus_T tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols)
     return OK;
 }
 
-NpStatus_T tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
+NpStatus_E tryNewIdentityMatrix(Matrix_S* maybeMatrix, size_t n)
 {
     if (0 == n)
     {
@@ -52,7 +52,7 @@ NpStatus_T tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n)
     return OK;
 }
 
-void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
+void inplaceRowSwap(Matrix_S* mat, size_t r1, size_t r2)
 {
     FLOATING tmp;
     for (size_t j = 0; j < mat->cols; j++)
@@ -63,7 +63,7 @@ void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2)
     }
 }
 
-void inplaceRowScale(Matrix_T* mat, size_t row, FLOATING scalar)
+void inplaceRowScale(Matrix_S* mat, size_t row, FLOATING scalar)
 {
     for (size_t j = 0; j < mat->cols; j++)
     {
@@ -71,7 +71,7 @@ void inplaceRowScale(Matrix_T* mat, size_t row, FLOATING scalar)
     }
 }
 
-void inplaceRowAdd(Matrix_T* mat, size_t r1, size_t r2)
+void inplaceRowAdd(Matrix_S* mat, size_t r1, size_t r2)
 {
     for (size_t j = 0; j < mat->cols; j++)
     {
@@ -80,7 +80,7 @@ void inplaceRowAdd(Matrix_T* mat, size_t r1, size_t r2)
     }
 }
 
-void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar)
+void inplaceScaledRowAdd(Matrix_S* mat, size_t r1, size_t r2, FLOATING scalar)
 {
     for (size_t j = 0; j < mat->cols; j++)
     {
@@ -89,7 +89,7 @@ void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar)
     }
 }
 
-NpStatus_T tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right)
+NpStatus_E tryMultiplyMatrix(Matrix_S* product, const Matrix_S* left, const Matrix_S* right)
 {
     if (left->cols != right->rows)
     {
@@ -117,7 +117,7 @@ NpStatus_T tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matr
     return OK;
 }
 
-NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right)
+NpStatus_E tryAugmentMatrix(Matrix_S* augment, const Matrix_S* left, const Matrix_S* right)
 {
     if (left->rows != right->rows)
     {
@@ -148,7 +148,7 @@ NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matri
     return OK;
 }
 
-NpStatus_T subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2)
+NpStatus_E subset(Matrix_S* slice, const Matrix_S* mat, size_t r1, size_t c1, size_t r2, size_t c2)
 {
     PROPOGATE_ERROR(
         tryNewMatrix(slice, r2 - r1 + 1, c2 - c1 + 1)
@@ -165,7 +165,7 @@ NpStatus_T subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, si
     return OK;
 }
 
-static inline NpStatus_T tryInplaceInvert2(Matrix_T* mat)
+static inline NpStatus_E tryInplaceInvert2(Matrix_S* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 0, 1));
@@ -187,7 +187,7 @@ static inline NpStatus_T tryInplaceInvert2(Matrix_T* mat)
     return OK;
 }
 
-static inline NpStatus_T tryInplaceInvert3(Matrix_T* mat)
+static inline NpStatus_E tryInplaceInvert3(Matrix_S* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 0, 1));
@@ -224,7 +224,7 @@ static inline NpStatus_T tryInplaceInvert3(Matrix_T* mat)
     return OK;
 }
 
-static inline NpStatus_T tryInplaceInvert4(Matrix_T* mat)
+static inline NpStatus_E tryInplaceInvert4(Matrix_S* mat)
 {
     FLOATING a11 = *(indexMatrix(mat, 0, 0));
     FLOATING a12 = *(indexMatrix(mat, 1, 0));
@@ -277,12 +277,12 @@ static inline NpStatus_T tryInplaceInvert4(Matrix_T* mat)
     return OK;
 }
 
-static inline NpStatus_T tryInplaceInvertN(Matrix_T* mat)
+static inline NpStatus_E tryInplaceInvertN(Matrix_S* mat)
 {
     // Assertion that rows == cols has already 
     // happened prior to this function call.
     size_t n = mat->cols;
-    Matrix_T inv; 
+    Matrix_S inv; 
 
     PROPOGATE_ERROR(
         tryNewIdentityMatrix(&inv, n)
@@ -325,9 +325,9 @@ static inline NpStatus_T tryInplaceInvertN(Matrix_T* mat)
     return OK;
 }
 
-NpStatus_T tryInplaceInvert(Matrix_T* mat)
+NpStatus_E tryInplaceInvert(Matrix_S* mat)
 {
-    NpStatus_T retVal = UNKNOWN_ERROR;
+    NpStatus_E retVal = ZERO_DETERMINANT;
     if (mat->cols != mat->rows)
     {
         return MATRIX_DIMENSION_MISMATCH;

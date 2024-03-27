@@ -3,7 +3,7 @@
 
 TEST(normal_elem_calculates_flux_correctly)
 {
-    GenericNode_T n1, n2;
+    GenericNode_S n1, n2;
     GenericElement_T e1;
 
     // Vecs for elements initialized here
@@ -27,7 +27,7 @@ TEST(normal_elem_calculates_flux_correctly)
     FLOATING resistance = 3;
     pushToVec(e1.gainVector, FLT_ELEM(1/resistance));
 
-    Vec_T* current = newVec(1); 
+    Vec_S* current = newVec(1); 
     pushToVec(current, FLT_ELEM(3));
     ASSERT(NULL != current)
 

@@ -6,33 +6,33 @@
 typedef struct Matrix_S
 {
     size_t rows, cols;
-    Vec_T* elements;
+    Vec_S* elements;
 }
-Matrix_T;
+Matrix_S;
 
-NpStatus_T tryNewMatrix(Matrix_T* maybeMatrix, size_t rows, size_t cols);
+NpStatus_E tryNewMatrix(Matrix_S* maybeMatrix, size_t rows, size_t cols);
 
-NpStatus_T tryNewIdentityMatrix(Matrix_T* maybeMatrix, size_t n);
+NpStatus_E tryNewIdentityMatrix(Matrix_S* maybeMatrix, size_t n);
 
-FLOATING* indexMatrix(const Matrix_T* mat, size_t i, size_t j)
+FLOATING* indexMatrix(const Matrix_S* mat, size_t i, size_t j)
 {
     return &(mat->elements->elements[i * mat->cols + j].floating);
 }
 
-void inplaceRowSwap(Matrix_T* mat, size_t r1, size_t r2);
+void inplaceRowSwap(Matrix_S* mat, size_t r1, size_t r2);
 
-void inplaceRowScale(Matrix_T* mat, size_t row, FLOATING scalar);
+void inplaceRowScale(Matrix_S* mat, size_t row, FLOATING scalar);
 
-void inplaceRowAdd(Matrix_T* mat, size_t r1, size_t r2);
+void inplaceRowAdd(Matrix_S* mat, size_t r1, size_t r2);
 
-void inplaceScaledRowAdd(Matrix_T* mat, size_t r1, size_t r2, FLOATING scalar);
+void inplaceScaledRowAdd(Matrix_S* mat, size_t r1, size_t r2, FLOATING scalar);
 
-NpStatus_T tryMultiplyMatrix(Matrix_T* product, const Matrix_T* left, const Matrix_T* right);
+NpStatus_E tryMultiplyMatrix(Matrix_S* product, const Matrix_S* left, const Matrix_S* right);
 
-NpStatus_T tryAugmentMatrix(Matrix_T* augment, const Matrix_T* left, const Matrix_T* right);
+NpStatus_E tryAugmentMatrix(Matrix_S* augment, const Matrix_S* left, const Matrix_S* right);
 
-NpStatus_T subset(Matrix_T* slice, const Matrix_T* mat, size_t r1, size_t c1, size_t r2, size_t c2);
+NpStatus_E subset(Matrix_S* slice, const Matrix_S* mat, size_t r1, size_t c1, size_t r2, size_t c2);
 
-NpStatus_T tryInplaceInvert(Matrix_T* mat);
+NpStatus_E tryInplaceInvert(Matrix_S* mat);
 
 #endif

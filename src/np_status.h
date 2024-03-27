@@ -8,7 +8,7 @@
  */
 #define PROPOGATE_ERROR(routine)\
 {\
-    NpStatus_T stat = (routine);\
+    NpStatus_E stat = (routine);\
     if (OK != stat)\
     {\
         return stat;\
@@ -35,6 +35,6 @@ typedef enum NpStatus_E
     // Last value:
     UNKNOWN_ERROR,
 }
-NpStatus_T;
+NpStatus_E;
 
 #endif

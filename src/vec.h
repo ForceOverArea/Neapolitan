@@ -18,34 +18,34 @@ typedef union VecElement_U
     POINTER pointer;      // size B
     INTEGRAL integral;    // size B
 } 
-VecElement_T;
+VecElement_U;
 
 typedef struct Vec_S
 {
     size_t len;
     size_t capacity;
-    VecElement_T elements[];
+    VecElement_U elements[];
 } 
-Vec_T;
+Vec_S;
 
-#define FLT_ELEM(x) (VecElement_T){ .floating = (x) }
+#define FLT_ELEM(x) (VecElement_U){ .floating = (x) }
 
-#define PTR_ELEM(x) (VecElement_T){ .pointer = (x) }
+#define PTR_ELEM(x) (VecElement_U){ .pointer = (x) }
 
-#define INT_ELEM(x) (VecElement_T){ .integral = (x) }
+#define INT_ELEM(x) (VecElement_U){ .integral = (x) }
 
-Vec_T* newVec(size_t numElems);
+Vec_S* newVec(size_t numElems);
 
-Vec_T* newVecWithLen(size_t numElems);
+Vec_S* newVecWithLen(size_t numElems);
 
-Vec_T* pushToVec(Vec_T* vec, VecElement_T elem);
+Vec_S* pushToVec(Vec_S* vec, VecElement_U elem);
 
-VecElement_T popFromVec(Vec_T* vec);
+VecElement_U popFromVec(Vec_S* vec);
 
-NpStatus_T elementWiseAdd(Vec_T* sum, Vec_T* lAddend, Vec_T* rAddend, bool isFloat);
+NpStatus_E elementWiseAdd(Vec_S* sum, Vec_S* lAddend, Vec_S* rAddend, bool isFloat);
 
-NpStatus_T elementWiseDiff(Vec_T* diff, Vec_T* minuend, Vec_T* subtrahend, bool isFloat);
+NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat);
 
-NpStatus_T elementWiseProd(Vec_T* diff, Vec_T* minuend, Vec_T* subtrahend, bool isFloat);
+NpStatus_E elementWiseProd(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat);
 
 #endif

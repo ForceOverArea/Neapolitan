@@ -9,7 +9,7 @@
  */
 #define _DX 0.00001;
 
-typedef Vec_T NodalProblem_T;
+typedef Vec_S NodalProblem_T;
 
 /**
  * A struct used for retaining important information about
@@ -32,7 +32,24 @@ typedef struct ProblemProperties_S
      */
     size_t matrixEdgeLen;
 }
-ProblemProperties_T;
+ProblemProperties_S;
+
+/**
+ * ### Desription
+ * Populates a struct with useful information 
+ * about the problem being solved.
+ * 
+ * ### Arguments
+ * `props`      (out)   - A reference to the struct to populate 
+ *                        with information regarding the problem
+ * `problem`    (inout) - A reference to the problem to pull 
+ *                        information from
+ * 
+ * ### Returns
+ * An `NpStatus_E` indicating success or information about what went
+ * wrong while trying to solve.
+ */
+void getProblemProps(ProblemProperties_S* props, const NodalProblem_T* const problem);
 
 /**
  * ### Description
@@ -47,26 +64,9 @@ ProblemProperties_T;
  *                        solve.
  * 
  * ### Returns
- * An `NpStatus_T` indicating success or information about what went
+ * An `NpStatus_E` indicating success or information about what went
  * wrong while trying to solve.
  */
-NpStatus_T solveNodalProblem(Vec_T* soln, NodalProblem_T problem);
-
-/**
- * ### Desription
- * Populates a struct with useful information 
- * about the problem being solved.
- * 
- * ### Arguments
- * `props`      (out)   - A reference to the struct to populate 
- *                        with information regarding the problem
- * `problem`    (inout) - A reference to the problem to pull 
- *                        information from
- * 
- * ### Returns
- * An `NpStatus_T` indicating success or information about what went
- * wrong while trying to solve.
- */
-void getProblemProps(ProblemProperties_T* props, const NodalProblem_T* const problem);
+NpStatus_E solveNodalProblem(Vec_S* soln, NodalProblem_T* problem);
 
 #endif

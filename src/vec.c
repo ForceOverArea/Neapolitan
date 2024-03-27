@@ -1,15 +1,15 @@
 #include "vec.h"
 
-Vec_T* newVec(size_t numElems)
+Vec_S* newVec(size_t numElems)
 {
     if (0 == numElems)
     {
         numElems = MIN_VEC_CAPACITY;
     }
 
-    Vec_T* retVal = malloc(
-        sizeof(Vec_T) + 
-        sizeof(VecElement_T) * numElems);
+    Vec_S* retVal = malloc(
+        sizeof(Vec_S) + 
+        sizeof(VecElement_U) * numElems);
 
     if (NULL == retVal)
     {
@@ -22,16 +22,16 @@ Vec_T* newVec(size_t numElems)
     return retVal;
 }
 
-Vec_T* newVecWithLen(size_t numElems)
+Vec_S* newVecWithLen(size_t numElems)
 {
     if (0 == numElems)
     {
         numElems = MIN_VEC_CAPACITY;
     }
 
-    Vec_T* retVal = malloc(
-        sizeof(Vec_T) + 
-        sizeof(VecElement_T) * numElems);
+    Vec_S* retVal = malloc(
+        sizeof(Vec_S) + 
+        sizeof(VecElement_U) * numElems);
 
     if (NULL == retVal)
     {
@@ -44,14 +44,14 @@ Vec_T* newVecWithLen(size_t numElems)
     return retVal;
 }
 
-Vec_T* pushToVec(Vec_T* vec, VecElement_T elem)
+Vec_S* pushToVec(Vec_S* vec, VecElement_U elem)
 {
-    Vec_T* retVal = vec; 
+    Vec_S* retVal = vec; 
     if (vec->len + 1 > vec->capacity)
     {
-        Vec_T* tmp = realloc(retVal, 
-            sizeof(Vec_T) +
-            sizeof(VecElement_T) * retVal->capacity * 2);
+        Vec_S* tmp = realloc(retVal, 
+            sizeof(Vec_S) +
+            sizeof(VecElement_U) * retVal->capacity * 2);
 
         if (NULL == tmp)
         {
@@ -68,97 +68,34 @@ Vec_T* pushToVec(Vec_T* vec, VecElement_T elem)
     return retVal;
 }
 
-VecElement_T popFromVec(Vec_T* vec)
+VecElement_U popFromVec(Vec_S* vec)
 {
     size_t back = vec->len;
-    VecElement_T retVal = vec->elements[back];
+    VecElement_U retVal = vec->elements[back];
     vec->len -= 1;
 
     return retVal;
 }
 
-NpStatus_T elementWiseAdd(Vec_T* sum, Vec_T* lAddend, Vec_T* rAddend, bool isFloat)
+NpStatus_E elementWiseAdd(Vec_S* sum, Vec_S* lAddend, Vec_S* rAddend, bool isFloat)
 {
-    if (sum->len != lAddend->len || lAddend->len != rAddend->len)
-    {
-        return VECTOR_LEN_MISMATCH;
-    }
-
-    size_t n = sum->len;
-    if (isFloat)
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            sum->elements[i].floating = 
-                lAddend->elements[i].floating + rAddend->elements[i].floating;
-        }
-    }
-    else
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            sum->elements[i].integral = 
-                lAddend->elements[i].integral + rAddend->elements[i].integral;
-        }
-    }
-
-    return OK;
+    #define OPERATOR +
+    #include "vecops.h"
+    #undef OPERATOR
 }
 
 #include <stdio.h>
 
-NpStatus_T elementWiseDiff(Vec_T* diff, Vec_T* minuend, Vec_T* subtrahend, bool isFloat)
+NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat)
 {
-    if (diff->len != minuend->len || minuend->len != subtrahend->len)
-    {
-        return VECTOR_LEN_MISMATCH;
-    }
-
-    size_t n = diff->len;
-    if (isFloat)
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            diff->elements[i].floating = 
-                minuend->elements[i].floating - subtrahend->elements[i].floating;
-        }
-    }
-    else
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            diff->elements[i].integral = 
-                minuend->elements[i].integral - subtrahend->elements[i].integral;
-        }
-    }
-
-    return OK;
+    #define OPERATOR -
+    #include "vecops.h"
+    #undef OPERATOR
 }
 
-NpStatus_T elementWiseProd(Vec_T* prod, Vec_T* lFactor, Vec_T* rFactor, bool isFloat)
+NpStatus_E elementWiseProd(Vec_S* prod, Vec_S* lFactor, Vec_S* rFactor, bool isFloat)
 {
-    if (prod->len != lFactor->len || lFactor->len != rFactor->len)
-    {
-        return VECTOR_LEN_MISMATCH;
-    }
-
-    size_t n = prod->len;
-    if (isFloat)
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            prod->elements[i].floating = 
-                lFactor->elements[i].floating * rFactor->elements[i].floating;
-        }
-    }
-    else
-    {
-        for (size_t i = 0; i < n; i++)
-        {
-            prod->elements[i].integral = 
-                lFactor->elements[i].integral * rFactor->elements[i].integral;
-        }
-    }
-
-    return OK;
+    #define OPERATOR *
+    #include "vecops.h"
+    #undef OPERATOR
 }

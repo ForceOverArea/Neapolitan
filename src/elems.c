@@ -1,11 +1,11 @@
 #include "elems.h"
 #include <stdio.h>
 
-static inline NpStatus_T prodDeltaGain(
-    Vec_T* result,
-    Vec_T* input, 
-    Vec_T* output,
-    Vec_T* gain)
+static inline NpStatus_E prodDeltaGain(
+    Vec_S* result,
+    Vec_S* input, 
+    Vec_S* output,
+    Vec_S* gain)
 {
     if (result->len != input->len ||
         input->len != output->len ||
@@ -24,9 +24,9 @@ static inline NpStatus_T prodDeltaGain(
     return OK;
 }
 
-static inline NpStatus_T addAssignElementWise(
-    Vec_T* sum,
-    Vec_T* addend)
+static inline NpStatus_E addAssignElementWise(
+    Vec_S* sum,
+    Vec_S* addend)
 {
     if (sum->len != addend->len)
     {
@@ -42,7 +42,7 @@ static inline NpStatus_T addAssignElementWise(
     return OK;
 }
 
-NpStatus_T tryNewElement(
+NpStatus_E tryNewElement(
     GenericElement_T* elem, 
     size_t dimension, 
     FluxCalculation_F func)
@@ -59,7 +59,7 @@ NpStatus_T tryNewElement(
     return OK;
 }
 
-NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension)
+NpStatus_E tryNewNode(GenericNode_S* node, size_t dimension)
 {   
     node->lockingElement = NULL;
 
@@ -87,11 +87,11 @@ NpStatus_T tryNewNode(GenericNode_T* node, size_t dimension)
     return OK;
 }
 
-NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
+NpStatus_E fluxDiscrepancy(Vec_S* fluxDiscrep, GenericNode_S* node)
 {
     size_t n = node->potentialVector->len;
 
-    Vec_T* totalInput, * totalOutput, * tmpFlux;
+    Vec_S* totalInput, * totalOutput, * tmpFlux;
     totalInput = newVecWithLen(n);
     if (NULL == totalInput)
     {
@@ -175,7 +175,7 @@ NpStatus_T fluxDiscrepancy(Vec_T* fluxDiscrep, GenericNode_T* node)
     return OK;
 }
 
-NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool _dnu)
+NpStatus_E normalFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* input, GenericNode_S* output, bool _dnu)
 {
     if (prodDeltaGain(flux, output->potentialVector, input->potentialVector, gain))
     {
@@ -185,7 +185,7 @@ NpStatus_T normalFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNod
     return OK;
 }
 
-NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNode_T* output, bool drivesOutput)
+NpStatus_E observeFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* input, GenericNode_S* output, bool drivesOutput)
 {
     if (drivesOutput)
     {
@@ -201,7 +201,7 @@ NpStatus_T observeFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* input, GenericNo
     return OK;
 }
 
-NpStatus_T forceFlux(Vec_T* flux, Vec_T* gain, GenericNode_T* _dnu1, GenericNode_T* _dnu2, bool _dnu3)
+NpStatus_E forceFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* _dnu1, GenericNode_S* _dnu2, bool _dnu3)
 {
     // FIXME: is this correct usage?
     (void)memcpy(flux, gain, sizeof *gain);
