@@ -4,7 +4,7 @@
 TEST(normal_elem_calculates_flux_correctly)
 {
     GenericNode_S n1, n2;
-    GenericElement_T e1;
+    GenericElement_S e1;
 
     // Vecs for elements initialized here
     ASSERT_OK(tryNewNode(&n1, 1))

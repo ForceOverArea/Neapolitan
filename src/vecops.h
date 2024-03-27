@@ -4,26 +4,26 @@
  * operations. 
  */
 #ifdef OPERATOR
-    if (prod->len != lFactor->len || lFactor->len != rFactor->len)
+    if (result->len != lOperend->len || lOperend->len != rOperend->len)
     {
         return VECTOR_LEN_MISMATCH;
     }
 
-    size_t n = prod->len;
+    size_t n = result->len;
     if (isFloat)
     {
         for (size_t i = 0; i < n; i++)
         {
-            prod->elements[i].floating = 
-                lFactor->elements[i].floating * rFactor->elements[i].floating;
+            result->elements[i].floating = 
+                lOperend->elements[i].floating * rOperend->elements[i].floating;
         }
     }
     else
     {
         for (size_t i = 0; i < n; i++)
         {
-            prod->elements[i].integral = 
-                lFactor->elements[i].integral * rFactor->elements[i].integral;
+            result->elements[i].integral = 
+                lOperend->elements[i].integral * rOperend->elements[i].integral;
         }
     }
 

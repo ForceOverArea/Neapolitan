@@ -43,7 +43,7 @@ static inline NpStatus_E addAssignElementWise(
 }
 
 NpStatus_E tryNewElement(
-    GenericElement_T* elem, 
+    GenericElement_S* elem, 
     size_t dimension, 
     FluxCalculation_F func)
 {
@@ -116,7 +116,7 @@ NpStatus_E fluxDiscrepancy(Vec_S* fluxDiscrep, GenericNode_S* node)
     for (size_t i = 0; i < node->inputs->len; i++)
     {
         // Get the element from the inputs list
-        GenericElement_T* input = (GenericElement_T*)(node->inputs->elements[i].pointer);
+        GenericElement_S* input = (GenericElement_S*)(node->inputs->elements[i].pointer);
 
         // Perform it's flux calculation
         input->flux(
@@ -140,7 +140,7 @@ NpStatus_E fluxDiscrepancy(Vec_S* fluxDiscrep, GenericNode_S* node)
     for (size_t i = 0; i < node->outputs->len; i++)
     {
         // Get the element from the outputs list
-        GenericElement_T* output = (GenericElement_T*)(node->outputs->elements[i].pointer);
+        GenericElement_S* output = (GenericElement_S*)(node->outputs->elements[i].pointer);
 
         // Perform it's flux calculation
         output->flux(

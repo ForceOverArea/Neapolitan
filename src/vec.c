@@ -77,23 +77,21 @@ VecElement_U popFromVec(Vec_S* vec)
     return retVal;
 }
 
-NpStatus_E elementWiseAdd(Vec_S* sum, Vec_S* lAddend, Vec_S* rAddend, bool isFloat)
+NpStatus_E elementWiseAdd(Vec_S* result, Vec_S* lOperend, Vec_S* rOperend, bool isFloat)
 {
     #define OPERATOR +
     #include "vecops.h"
     #undef OPERATOR
 }
 
-#include <stdio.h>
-
-NpStatus_E elementWiseDiff(Vec_S* diff, Vec_S* minuend, Vec_S* subtrahend, bool isFloat)
+NpStatus_E elementWiseDiff(Vec_S* result, Vec_S* lOperend, Vec_S* rOperend, bool isFloat)
 {
     #define OPERATOR -
     #include "vecops.h"
     #undef OPERATOR
 }
 
-NpStatus_E elementWiseProd(Vec_S* prod, Vec_S* lFactor, Vec_S* rFactor, bool isFloat)
+NpStatus_E elementWiseProd(Vec_S* result, Vec_S* lOperend, Vec_S* rOperend, bool isFloat)
 {
     #define OPERATOR *
     #include "vecops.h"

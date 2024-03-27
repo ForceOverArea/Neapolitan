@@ -82,14 +82,14 @@ typedef struct GenericElement_S
      */
     FluxCalculation_F flux;
 } 
-GenericElement_T;
+GenericElement_S;
 
 /**
  * Initializes a new generic element with no connected nodes, no
  * flux function, and empty gain potential vectors of the given 
  * dimension. 
  */
-NpStatus_E tryNewElement(GenericElement_T* elem, size_t dimension, FluxCalculation_F func);
+NpStatus_E tryNewElement(GenericElement_S* elem, size_t dimension, FluxCalculation_F func);
 
 /**
  * Initializes a new, unlocked node with empty vectors for new elements
