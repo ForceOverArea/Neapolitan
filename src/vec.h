@@ -52,4 +52,8 @@ NpStatus_E addAssignElementWise(Vec_S* sum, Vec_S* addend);
 
 NpStatus_E subAssignElementWise(Vec_S* difference, Vec_S* subtrahend);
 
+void elementWiseAbs(Vec_S* vec);
+
+void zeroVector(Vec_S* vec);
+
 #endif

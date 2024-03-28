@@ -196,3 +196,20 @@ NpStatus_E subAssignElementWise(
 
     return OK;
 }
+
+void elementWiseAbs(Vec_S* vec)
+{
+    // Calculate element-wise potential 
+    for (size_t i = 0; i < vec->len; i++)
+    {
+        vec->elements[i].floating = abs(vec->elements[i].floating);
+    }
+}
+
+void zeroVector(Vec_S* vec)
+{
+    for (size_t i = 0; i < vec->len; i++)
+    {
+        vec->elements[i].floating = 0.0;
+    }
+}
