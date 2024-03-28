@@ -123,4 +123,9 @@ NpStatus_E observeFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* input, GenericNo
  */
 NpStatus_E forceFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* input, GenericNode_S* output, bool _dnu);
 
+/**
+ * Populates `flux` with the flux calculated through `elem`.
+ */
+NpStatus_E calculateElementFlux(Vec_S* flux, GenericElement_S* elem);
+
 #endif

@@ -71,89 +71,45 @@ NpStatus_E tryNewNode(GenericNode_S* node, size_t dimension)
 
 NpStatus_E fluxDiscrepancy(Vec_S* fluxDiscrep, GenericNode_S* node)
 {
+    GenericElement_S* elem;
+    NpStatus_E stat;
+    Vec_S* tmpFlux;
+
+    zeroVector(fluxDiscrep);
     size_t n = node->potentialVector->len;
-
-    Vec_S* totalInput, * totalOutput, * tmpFlux;
-    totalInput = newVecWithLen(n);
-    if (NULL == totalInput)
-    {
-        return OUT_OF_MEMORY;   
-    }
-
-    totalOutput = newVecWithLen(n);
-    if (NULL == totalOutput)
-    {
-        free(totalInput);
-        return OUT_OF_MEMORY;
-    }
 
     tmpFlux = newVecWithLen(n); 
     if (NULL == tmpFlux)
     {
-        free(totalInput);
-        free(totalOutput);
         return OUT_OF_MEMORY;
     }
 
     for (size_t i = 0; i < node->inputs->len; i++)
     {
-        // Get the element from the inputs list
-        GenericElement_S* input = (GenericElement_S*)(node->inputs->elements[i].pointer);
-
-        // Perform it's flux calculation
-        input->flux(
-            tmpFlux,
-            input->gainVector, 
-            input->inputNode, 
-            input->outputNode,
-            input->drivesOutputPotential);
-
-        // Sum up the flux discrepancy
-        if (addAssignElementWise(totalInput, tmpFlux))
+        elem = (GenericElement_S*)(node->inputs->elements[i].pointer);
+        PROPOGATE_ERROR(calculateElementFlux(tmpFlux, elem))
+        stat = addAssignElementWise(fluxDiscrep, tmpFlux);
+        if (OK != stat)
         {
-            free(totalInput);
-            free(totalOutput);
             free(tmpFlux);
-            return VECTOR_LEN_MISMATCH; // This is the only possible error to report
+            return VECTOR_LEN_MISMATCH;
         }
     }
 
     // Rinse and repeat for outputs
     for (size_t i = 0; i < node->outputs->len; i++)
     {
-        // Get the element from the outputs list
-        GenericElement_S* output = (GenericElement_S*)(node->outputs->elements[i].pointer);
-
-        // Perform it's flux calculation
-        output->flux(
-            tmpFlux,
-            output->gainVector, 
-            output->inputNode, 
-            output->outputNode,
-            output->drivesOutputPotential);
-
-        // Sum up the flux discrepancy
-        if (addAssignElementWise(totalOutput, tmpFlux))
+        elem = (GenericElement_S*)(node->outputs->elements[i].pointer);
+        PROPOGATE_ERROR(calculateElementFlux(tmpFlux, elem))
+        stat = subAssignElementWise(fluxDiscrep, tmpFlux);
+        if (OK != stat)
         {
-            free(totalInput);
-            free(totalOutput);
             free(tmpFlux);
-            return VECTOR_LEN_MISMATCH; // This is the only possible error to report
+            return VECTOR_LEN_MISMATCH;
         }
     }
 
-    if (elementWiseDiff(fluxDiscrep, totalInput, totalOutput, true))
-    {
-        free(totalInput);
-        free(totalOutput);
-        free(tmpFlux);
-        return VECTOR_LEN_MISMATCH; // This is the only possible error to report
-    }
-
-    free(totalInput);
-    free(totalOutput);
     free(tmpFlux);
-
     return OK;
 }
 
@@ -188,4 +144,14 @@ NpStatus_E forceFlux(Vec_S* flux, Vec_S* gain, GenericNode_S* _dnu1, GenericNode
     // FIXME: is this correct usage?
     (void)memcpy(flux, gain, sizeof *gain);
     return OK;
+}
+
+NpStatus_E calculateElementFlux(Vec_S* flux, GenericElement_S* elem)
+{
+    return elem->flux(
+        flux, 
+        elem->gainVector,
+        elem->inputNode,
+        elem->outputNode,
+        elem->drivesOutputPotential);
 }
